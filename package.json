@@ -13,7 +13,7 @@
     "forge-std": "github:foundry-rs/forge-std#v1.8.1",
     "prettier": "^3.3.3",
     "prettier-plugin-solidity": "^1.4.1",
-    "solhint": "^3.6.2"
+    "solhint": "^5.0.3"
   },
   "keywords": [
     "blockchain",
@@ -28,8 +28,8 @@
   "scripts": {
     "clean": "rm -rf cache out",
     "build": "forge build",
-    "lint": "bun run lint:sol && bun run prettier:check",
-    "lint:sol": "forge fmt --check && bun solhint \"{script,src,test}/**/*.sol\"",
+    "lint": "npm run lint:sol && npm run prettier:check",
+    "lint:sol": "forge fmt --check && npx solhint \"{script,src,test}/**/*.sol\"",
     "prettier:check": "prettier --check \"**/*.{json,md,yml}\" --ignore-path \".prettierignore\"",
     "prettier:write": "prettier --write \"**/*.{json,md,yml}\" --ignore-path \".prettierignore\"",
     "test": "forge test",

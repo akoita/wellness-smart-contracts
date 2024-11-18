@@ -28,7 +28,8 @@ contract FooTest is Test {
         assertEq(foo.id(x), x, "value mismatch");
     }
 
-    /// @dev Fuzz test that provides random values for an unsigned integer, but which rejects zero as an input.
+    /// @dev Fuzz test that provides random values for an unsigned integer, but which rejects zero
+    /// as an input.
     /// If you need more sophisticated input validation, you should use the `bound` utility instead.
     /// See https://twitter.com/PaulRBerg/status/1622558791685242880
     function testFuzz_Example(uint256 x) external view {
@@ -36,7 +37,8 @@ contract FooTest is Test {
         assertEq(foo.id(x), x, "value mismatch");
     }
 
-    /// @dev Fork test that runs against an Ethereum Mainnet fork. For this to work, you need to set `API_KEY_ALCHEMY`
+    /// @dev Fork test that runs against an Ethereum Mainnet fork. For this to work, you need to set
+    /// `API_KEY_ALCHEMY`
     /// in your environment You can get an API key for free at https://alchemy.com.
     function testFork_Example() external {
         // Silently pass this test if there is no API key.

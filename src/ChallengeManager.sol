@@ -1,63 +1,77 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.28;
 
-import { AccessControl } from "@openzeppelin/contracts/access/AccessControl.sol";
+import { AccessControlEnumerable } from "@openzeppelin/contracts/access/extensions/AccessControlEnumerable.sol";
 import { IWellnessHome } from "./interfaces/IWellnessHome.sol";
-import { IChallengeCompletionValidationStrategy } from "./interfaces/IChallengeCompletionValidationStrategy.sol";
 import { IChallengeManager } from "./interfaces/IChallengeManager.sol";
 import { IChallengeRewardStrategy } from "./interfaces/IChallengeRewardStrategy.sol";
-import { ChallengeLibrary } from "./types/DataTypes.sol";
+import { IChallengeCompletionValidationStrategy } from "./interfaces/IChallengeCompletionValidationStrategy.sol";
+import {
+    ChallengeLibrary,
+    Challenge,
+    ChallengeCompletion,
+    ChallengeState,
+    ChallengeCompletionStatus,
+    PartnerSettings
+} from "./types/DataTypes.sol";
 import { IterableMapping } from "./types/IterableMapping.sol";
-import { Challenge, ChallengeCompletion } from "./types/DataTypes.sol";
 import { EnumerableSet } from "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
-import { ChallengeState } from "./types/DataTypes.sol";
-import { ChallengeCompletionStatus } from "./types/DataTypes.sol";
-import { ChallengeCompletionValidatorRoleRequired, NonExistingChallengeCompletion } from "./commons/Errors.sol";
-import { NonExistingChallenge } from "./commons/Errors.sol";
-import { ExpectedPendingChallenge, ExpectedStartedChallenge, ChallengeMaxWinnersReached } from "./commons/Errors.sol";
-import { ChallengeCompletionLibrary } from "./types/DataTypes.sol";
-import { ChallengeCompletionAlreadySubmitted } from "./commons/Errors.sol";
-import { ChallengeRewardStrategyRoleRequired } from "./commons/Errors.sol";
 
 import {
+    ChallengeCompletionValidatorRoleRequired,
+    NonExistingChallengeCompletion,
+    NonExistingChallenge,
+    ExpectedPendingChallenge,
+    ExpectedStartedChallenge,
+    ChallengeMaxWinnersReached,
+    ChallengeCompletionAlreadySubmitted,
+    ChallengeRewardStrategyRoleRequired,
     InvalidPartner,
     InvalidUser,
-    UserOperationNotAllowedForPartner,
-    UserOperationNotAllowedForOwner
+    InvalidInputChallenge,
+    InvalidInputChallengeCompletion,
+    InvalidChallengeSubmitter,
+    ChallengeCompletionAlreadyEvaluated,
+    AdminRoleRequired
 } from "./commons/Errors.sol";
 
-contract ChallengeManager is AccessControl, IChallengeManager {
+import { ChallengeSubmitted, ChallengeCompletionSubmitted, ChallengeCompletionEvaluated } from "./commons/events.sol";
+
+/// @title ChallengeManager
+/// @dev Manages challenges and their completions
+contract ChallengeManager is AccessControlEnumerable, IChallengeManager {
     using EnumerableSet for EnumerableSet.UintSet;
     using ChallengeLibrary for Challenge;
-    using ChallengeCompletionLibrary for ChallengeCompletion;
     using IterableMapping for IterableMapping.ChallengesItMap;
     using IterableMapping for IterableMapping.ChallengeCompletionsItMap;
 
-    event ChallengeSubmitted(string challengeId, address indexed partner);
-    event ChallengeCompletionSubmitted(string challengeId, address indexed partner);
-
+    // Type declarations
     bytes32 public constant CHALLENGE_COMPLETION_VALIDATOR_ROLE = keccak256("CHALLENGE_COMPLETION_VALIDATOR_ROLE");
     bytes32 public constant CHALLENGE_REWARD_STRATEGY_ROLE = keccak256("CHALLENGE_REWARD_STRATEGY_ROLE");
 
     // State variables
+    uint256 public challengeIdCounter;
+    uint256 public challengeCompletionIdCounter;
+    uint256 public minimumChallengeDuration;
+    uint256 public maximumChallengeDuration;
     IWellnessHome public wellnessHome;
-    IChallengeRewardStrategy public challengeRewardStrategy;
-
-    IterableMapping.ChallengesItMap internal challenges;
-    IterableMapping.ChallengeCompletionsItMap internal challengeCompletions;
-    mapping(uint256 challengeId => EnumerableSet.UintSet challengeCompletionIds) internal
-        challengeCompletionsByChallenge;
-    mapping(address user => EnumerableSet.UintSet challengeCompletionIds) internal usersChallengeCompletions;
-    mapping(uint256 challengeId => EnumerableSet.UintSet challengeCompletionIds) internal challengeCompletionsApproved;
+    IChallengeRewardStrategy public _challengeRewardStrategy;
+    IterableMapping.ChallengesItMap internal _challenges;
+    mapping(address partner => EnumerableSet.UintSet partnerChallengeIds) internal _partnersChallenges;
+    IterableMapping.ChallengeCompletionsItMap internal _challengeCompletions;
+    mapping(uint256 challengeId => EnumerableSet.UintSet challengeCompletionsIds) internal
+        _challengeCompletionsByChallenge;
+    mapping(uint256 challengeId => EnumerableSet.UintSet challengeCompletionsIds) internal
+        _challengeCompletionsApprovedByChallenge;
+    mapping(address user => EnumerableSet.UintSet userChallengeCompletionsIds) internal _usersChallengeCompletions;
 
     // Modifiers
-
     modifier onlyAdmin() {
-        require(hasRole(DEFAULT_ADMIN_ROLE, msg.sender), "Caller is not a default admin");
+        require(hasRole(DEFAULT_ADMIN_ROLE, msg.sender), AdminRoleRequired(msg.sender));
         _;
     }
 
-    modifier onlyChallengeCompletionValidator() {
+    modifier _onlyChallengeCompletionValidator() {
         require(
             hasRole(CHALLENGE_COMPLETION_VALIDATOR_ROLE, msg.sender),
             ChallengeCompletionValidatorRoleRequired(msg.sender)
@@ -65,57 +79,87 @@ contract ChallengeManager is AccessControl, IChallengeManager {
         _;
     }
 
-    modifier onlyChallengeRewardStrategy() {
+    modifier _onlyChallengeRewardStrategy() {
         require(hasRole(CHALLENGE_REWARD_STRATEGY_ROLE, msg.sender), ChallengeRewardStrategyRoleRequired(msg.sender));
         _;
     }
 
-    modifier onlyPartner() {
+    modifier _onlyPartner() {
         require(wellnessHome.isPartner(msg.sender), InvalidPartner(msg.sender));
         _;
     }
 
-    modifier onlyUser() {
-        require(wellnessHome.isUser(msg.sender), InvalidUser(msg.sender));
-        _;
-    }
-
-    modifier onlyPendingChallenge(uint256 challengeId) {
-        require(challenges.contains(challengeId), NonExistingChallenge(challengeId));
-        require(challenges.get(challengeId).isChallengePending(), ExpectedPendingChallenge(challengeId));
-        _;
-    }
-
-    modifier onlyInProgressChallenge(uint256 challengeId) {
-        require(challenges.contains(challengeId), NonExistingChallenge(challengeId));
-        require(challenges.get(challengeId).isChallengeInProgress(), ExpectedStartedChallenge(challengeId));
+    modifier _onlyChallengeSubmitter(address submitter, uint256 challengeId) {
         require(
-            challengeCompletionsByChallenge[challengeId].length() < challenges.get(challengeId).maxWinners,
-            ChallengeMaxWinnersReached(challengeId)
+            address(0) != submitter && _challenges.get(challengeId).submitter == submitter,
+            InvalidChallengeSubmitter(challengeId, submitter)
         );
-
         _;
     }
 
-    modifier onlyExistingChallengeCompletion(uint256 challengeCompletionId) {
+    modifier onlyUser(address user) {
+        require(wellnessHome.isUser(user), InvalidUser(user));
+        _;
+    }
+
+    modifier _onlyPendingChallenge(uint256 challengeId) {
+        Challenge storage challenge = _challenges.get(challengeId);
+        require(challenge.isChallengePending(), ExpectedPendingChallenge(challengeId, challenge.state));
+        _;
+    }
+
+    modifier _onlyInProgressChallenge(uint256 challengeId) {
+        require(_challenges.get(challengeId).isChallengeInProgress(), ExpectedStartedChallenge(challengeId));
+        _;
+    }
+
+    modifier _onlyExistingChallenge(uint256 challengeId) {
+        require(_challenges.contains(challengeId), NonExistingChallenge(challengeId));
+        _;
+    }
+
+    modifier _onlyExistingChallengeCompletion(uint256 challengeCompletionId) {
         require(challengeCompletionExists(challengeCompletionId), NonExistingChallengeCompletion(challengeCompletionId));
         _;
     }
 
-    modifier onlyNotYetSubmittedChallengeCompletion(uint256 challengeId, address user) {
-        require(challenges.contains(challengeId), NonExistingChallenge(challengeId));
+    modifier _onlyMaxWinnersNotReached(uint256 challengeId) {
+        uint256 maxWinners = _challenges.get(challengeId).maxWinners;
         require(
-            !usersChallengeCompletions[user].contains(challengeId),
+            _challengeCompletionsApprovedByChallenge[challengeId].length() < maxWinners,
+            ChallengeMaxWinnersReached(challengeId, maxWinners)
+        );
+        _;
+    }
+
+    modifier _onlyNotYetSubmittedChallengeCompletion(uint256 challengeId, address user) {
+        require(
+            !_usersChallengeCompletions[user].contains(challengeId),
             ChallengeCompletionAlreadySubmitted(challengeId, user)
         );
         _;
     }
 
+    modifier _onlyNotYetEvaluatedChallengeCompletion(uint256 challengeCompletionId) {
+        ChallengeCompletion storage completion = _challengeCompletions.get(challengeCompletionId);
+        require(
+            completion.status == ChallengeCompletionStatus.UNDEFINED,
+            ChallengeCompletionAlreadyEvaluated(challengeCompletionId)
+        );
+        _;
+    }
+
+    // Constructor
     constructor(address initialOwner, address wellnessHomeAddress) {
         _grantRole(DEFAULT_ADMIN_ROLE, initialOwner);
+        challengeIdCounter = 1;
+        challengeCompletionIdCounter = 1;
+        minimumChallengeDuration = 1 days;
+        maximumChallengeDuration = 10 days;
         wellnessHome = IWellnessHome(wellnessHomeAddress);
     }
 
+    // External functions
     function setWellnessHome(address wellnessHomeAddress) external onlyAdmin {
         wellnessHome = IWellnessHome(wellnessHomeAddress);
     }
@@ -128,20 +172,152 @@ contract ChallengeManager is AccessControl, IChallengeManager {
         _revokeRole(DEFAULT_ADMIN_ROLE, defaultAdmin);
     }
 
-    function grantChallengeCompletionValidatorRole(address challengeCompletionValidator) external onlyAdmin {
-        _grantRole(CHALLENGE_COMPLETION_VALIDATOR_ROLE, challengeCompletionValidator);
+    function hasAdminRole(address admin) external view returns (bool) {
+        return hasRole(DEFAULT_ADMIN_ROLE, admin);
     }
 
-    function revokeChallengeCompletionValidatorRole(address challengeCompletionValidator) external onlyAdmin {
-        _revokeRole(CHALLENGE_COMPLETION_VALIDATOR_ROLE, challengeCompletionValidator);
+    function grantChallengeCompletionValidatorRole(
+        IChallengeCompletionValidationStrategy challengeCompletionValidator
+    )
+        external
+        onlyAdmin
+    {
+        _grantRole(CHALLENGE_COMPLETION_VALIDATOR_ROLE, address(challengeCompletionValidator));
     }
 
-    function grantChallengeRewardStrategyRole(address challengeRewardStrategy_) external onlyAdmin {
-        _grantRole(CHALLENGE_REWARD_STRATEGY_ROLE, challengeRewardStrategy_);
+    function revokeChallengeCompletionValidatorRole(
+        IChallengeCompletionValidationStrategy challengeCompletionValidator
+    )
+        external
+        onlyAdmin
+    {
+        _revokeRole(CHALLENGE_COMPLETION_VALIDATOR_ROLE, address(challengeCompletionValidator));
     }
 
-    function revokeChallengeRewardStrategyRole(address challengeRewardStrategy_) external onlyAdmin {
-        _revokeRole(CHALLENGE_REWARD_STRATEGY_ROLE, challengeRewardStrategy_);
+    function hasChallengeCompletionValidatorRole(
+        IChallengeCompletionValidationStrategy challengeCompletionValidator
+    )
+        external
+        view
+        returns (bool)
+    {
+        return hasRole(CHALLENGE_COMPLETION_VALIDATOR_ROLE, address(challengeCompletionValidator));
+    }
+
+    function grantChallengeRewardStrategyRole(IChallengeRewardStrategy challengeRewardStrategy_) external onlyAdmin {
+        _grantRole(CHALLENGE_REWARD_STRATEGY_ROLE, address(challengeRewardStrategy_));
+    }
+
+    function revokeChallengeRewardStrategyRole(IChallengeRewardStrategy challengeRewardStrategy_) external onlyAdmin {
+        _revokeRole(CHALLENGE_REWARD_STRATEGY_ROLE, address(challengeRewardStrategy_));
+    }
+
+    function hasChallengeRewardStrategyRole(address challengeRewardStrategy_) external view returns (bool) {
+        return hasRole(CHALLENGE_REWARD_STRATEGY_ROLE, challengeRewardStrategy_);
+    }
+
+    function submitChallenge(Challenge memory challenge) external _onlyPartner {
+        require(bytes(challenge.title).length > 0, InvalidInputChallenge("Challenge title is required"));
+        require(bytes(challenge.description).length > 0, InvalidInputChallenge("Challenge description is required"));
+        require(
+            bytes(challenge.target).length > 0,
+            InvalidInputChallenge("Challenge target (product or service) is required")
+        );
+        require(challenge.maxWinners > 0, InvalidInputChallenge("Challenge max winners must be greater than 0"));
+        require(
+            challenge.duration >= minimumChallengeDuration,
+            InvalidInputChallenge("Challenge duration less than minimum")
+        );
+        require(
+            challenge.duration <= maximumChallengeDuration,
+            InvalidInputChallenge("Challenge duration greater than maximum")
+        );
+
+        challenge.id = challengeIdCounter;
+        challengeIdCounter++;
+        challenge.submitter = msg.sender;
+        challenge.state = ChallengeState.PENDING;
+        challenge.tokenRewardAmount = 1;
+        PartnerSettings memory partnerSettings = wellnessHome.getPartnerSettings(msg.sender);
+        challenge.soulboundToken = partnerSettings.soulboundTokenAddress;
+        _challenges.set(challenge.id, challenge);
+        _partnersChallenges[msg.sender].add(challenge.id);
+        emit ChallengeSubmitted(challenge.id, msg.sender, challenge.theme, challenge);
+    }
+
+    function startChallenge(
+        uint256 challengeId
+    )
+        external
+        _onlyExistingChallenge(challengeId)
+        _onlyPendingChallenge(challengeId)
+        _onlyChallengeSubmitter(msg.sender, challengeId)
+    {
+        _challenges.get(challengeId).startChallenge();
+    }
+
+    function cancelChallenge(
+        uint256 challengeId
+    )
+        external
+        _onlyExistingChallenge(challengeId)
+        _onlyPendingChallenge(challengeId)
+        _onlyChallengeSubmitter(msg.sender, challengeId)
+    {
+        _challenges.get(challengeId).cancelChallenge();
+    }
+
+    function submitChallengeCompletion(
+        ChallengeCompletion memory completion
+    )
+        external
+        onlyUser(msg.sender)
+        _onlyExistingChallenge(completion.challengeId)
+        _onlyInProgressChallenge(completion.challengeId)
+        _onlyMaxWinnersNotReached(completion.challengeId)
+        _onlyNotYetSubmittedChallengeCompletion(completion.challengeId, msg.sender)
+    {
+        require(
+            bytes(completion.data).length > 0, InvalidInputChallengeCompletion("Challenge completion data is required")
+        );
+        completion.id = challengeCompletionIdCounter;
+        challengeCompletionIdCounter++;
+        completion.submitter = msg.sender;
+        completion.status = ChallengeCompletionStatus.UNDEFINED;
+        completion.rewarded = false;
+        _challengeCompletions.set(completion.id, completion);
+        _challengeCompletionsByChallenge[completion.challengeId].add(completion.id);
+        _usersChallengeCompletions[msg.sender].add(completion.id);
+        emit ChallengeCompletionSubmitted(completion.id, completion.challengeId, msg.sender, completion);
+    }
+
+    /// @inheritdoc IChallengeManager
+    function evaluateChallengeCompletion(
+        uint256 challengeCompletionId,
+        bool approved
+    )
+        external
+        _onlyChallengeCompletionValidator
+        _onlyExistingChallengeCompletion(challengeCompletionId)
+        _onlyNotYetEvaluatedChallengeCompletion(challengeCompletionId)
+    {
+        ChallengeCompletion storage completion = _challengeCompletions.get(challengeCompletionId);
+        if (
+            _challengeCompletionsApprovedByChallenge[completion.challengeId].length()
+                >= _challenges.get(completion.challengeId).maxWinners
+        ) {
+            revert ChallengeMaxWinnersReached(
+                completion.challengeId, _challenges.get(completion.challengeId).maxWinners
+            );
+        }
+        completion.status = approved ? ChallengeCompletionStatus.SUCCESS : ChallengeCompletionStatus.FAILURE;
+        completion.evaluationTime = block.timestamp;
+        if (approved) {
+            _challengeCompletionsApprovedByChallenge[completion.challengeId].add(challengeCompletionId);
+        }
+        emit ChallengeCompletionEvaluated(
+            challengeCompletionId, completion.challengeId, completion.submitter, completion
+        );
     }
 
     /// @inheritdoc IChallengeManager
@@ -149,10 +325,10 @@ contract ChallengeManager is AccessControl, IChallengeManager {
         uint256 challengeCompletionId
     )
         external
-        onlyChallengeRewardStrategy
-        onlyExistingChallengeCompletion(challengeCompletionId)
+        _onlyChallengeRewardStrategy
+        _onlyExistingChallengeCompletion(challengeCompletionId)
     {
-        challengeCompletions.get(challengeCompletionId).rewarded = true;
+        _challengeCompletions.get(challengeCompletionId).rewarded = true;
     }
 
     /// @inheritdoc IChallengeManager
@@ -161,58 +337,11 @@ contract ChallengeManager is AccessControl, IChallengeManager {
     )
         external
         view
-        onlyExistingChallengeCompletion(challengeCompletionId)
+        _onlyExistingChallengeCompletion(challengeCompletionId)
         returns (bool)
     {
-        ChallengeCompletion storage completion = challengeCompletions.get(challengeCompletionId);
-        return !completion.rewarded;
-    }
-
-    /// @inheritdoc IChallengeManager
-    function approoveChallengeCompletion(
-        uint256 challengeCompletionId,
-        bool approved
-    )
-        external
-        onlyChallengeCompletionValidator
-        onlyInProgressChallenge(challengeCompletionId)
-        onlyExistingChallengeCompletion(challengeCompletionId)
-    {
-        ChallengeCompletion storage completion = challengeCompletions.get(challengeCompletionId);
-        completion.status = approved ? ChallengeCompletionStatus.SUCCESS : ChallengeCompletionStatus.FAILURE;
-        challengeCompletions.set(challengeCompletionId, completion);
-        challengeCompletionsApproved[completion.challengeId].add(challengeCompletionId);
-    }
-
-    function submitChallenge(Challenge memory challenge) external onlyPartner {
-        challenge.submitter = msg.sender;
-        challenge.state = ChallengeState.PENDING;
-        challenge.id = challenge.key();
-        challenges.set(challenge.id, challenge);
-    }
-
-    function startChallenge(uint256 challengeId) external onlyPartner onlyPendingChallenge(challengeId) {
-        challenges.get(challengeId).startChallenge();
-    }
-
-    function cancelChallenge(uint256 challengeId) external onlyPartner onlyPendingChallenge(challengeId) {
-        challenges.get(challengeId).cancelChallenge();
-    }
-
-    function submitChallengeCompletion(
-        ChallengeCompletion memory completion
-    )
-        external
-        onlyUser
-        onlyNotYetSubmittedChallengeCompletion(completion.challengeId, msg.sender)
-        onlyExistingChallengeCompletion(completion.id)
-        onlyInProgressChallenge(completion.challengeId)
-    {
-        completion.submitter = msg.sender;
-        completion.id = completion.key();
-        challengeCompletions.set(completion.id, completion);
-        challengeCompletionsByChallenge[completion.challengeId].add(completion.id);
-        usersChallengeCompletions[msg.sender].add(completion.id);
+        ChallengeCompletion storage completion = _challengeCompletions.get(challengeCompletionId);
+        return completion.status == ChallengeCompletionStatus.SUCCESS && !completion.rewarded;
     }
 
     function isChallengeCompletionApproved(
@@ -220,13 +349,83 @@ contract ChallengeManager is AccessControl, IChallengeManager {
     )
         external
         view
-        onlyExistingChallengeCompletion(challengeCompletionId)
+        _onlyExistingChallengeCompletion(challengeCompletionId)
         returns (bool)
     {
-        return challengeCompletions.get(challengeCompletionId).status == ChallengeCompletionStatus.SUCCESS;
+        return _challengeCompletions.get(challengeCompletionId).status == ChallengeCompletionStatus.SUCCESS;
     }
 
     function challengeCompletionExists(uint256 challengeCompletionId) public view returns (bool) {
-        return challengeCompletionId != 0 && challengeCompletions.contains(challengeCompletionId);
+        return challengeCompletionId != 0 && _challengeCompletions.contains(challengeCompletionId);
+    }
+
+    function getChallengeCompletion(
+        uint256 challengeCompletionId
+    )
+        external
+        view
+        _onlyExistingChallengeCompletion(challengeCompletionId)
+        returns (ChallengeCompletion memory)
+    {
+        return _challengeCompletions.get(challengeCompletionId);
+    }
+
+    function getChallengeByCompletion(
+        uint256 challengeCompletionId
+    )
+        external
+        view
+        _onlyExistingChallengeCompletion(challengeCompletionId)
+        returns (Challenge memory)
+    {
+        return _challenges.get(_challengeCompletions.get(challengeCompletionId).challengeId);
+    }
+
+    function challengeExists(uint256 challengeId) public view returns (bool) {
+        return challengeId != 0 && _challenges.contains(challengeId);
+    }
+
+    function getChallenge(
+        uint256 challengeId
+    )
+        external
+        view
+        _onlyExistingChallenge(challengeId)
+        returns (Challenge memory)
+    {
+        return _challenges.get(challengeId);
+    }
+
+    function getChallengeCompletionsByChallenge(
+        uint256 challengeId
+    )
+        external
+        view
+        _onlyExistingChallenge(challengeId)
+        returns (uint256[] memory challengeCompletionIds)
+    {
+        return _challengeCompletionsByChallenge[challengeId].values();
+    }
+
+    function getApprovedChallengeCompletionsByChallenge(
+        uint256 challengeId
+    )
+        external
+        view
+        _onlyExistingChallenge(challengeId)
+        returns (uint256[] memory challengeCompletionIds)
+    {
+        return _challengeCompletionsApprovedByChallenge[challengeId].values();
+    }
+
+    function getUserChallengeCompletions(
+        address user
+    )
+        external
+        view
+        onlyUser(user)
+        returns (uint256[] memory challengeCompletionIds)
+    {
+        return _usersChallengeCompletions[user].values();
     }
 }

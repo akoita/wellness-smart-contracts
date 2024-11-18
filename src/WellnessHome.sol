@@ -5,6 +5,7 @@ import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 import { IWellnessHome } from "./interfaces/IWellnessHome.sol";
 import { EnumerableSet } from "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 import { WellnessSoulboundToken } from "./WellnessSoulboundToken.sol";
+import { PartnerSettings } from "./types/DataTypes.sol";
 
 import {
     PartnerNotRegistered,
@@ -18,49 +19,41 @@ import {
     OwnerAddressForbidden
 } from "./commons/Errors.sol";
 
+/// @title WellnessHome
+/// @dev Manages partner and user registrations
 contract WellnessHome is Ownable, IWellnessHome {
-    // Add the library methods
     using EnumerableSet for EnumerableSet.AddressSet;
 
-    struct PartnerSettings {
-        string soulboundTokenName;
-        string soulboundTokenSymbol;
-        address soulboundTokenAddress;
-        string logoUrl;
-        string logoSVG;
-    }
-
-    // Declare a set state variable
-    EnumerableSet.AddressSet internal partners;
-    mapping(address => PartnerSettings) internal partnerSettings;
-    EnumerableSet.AddressSet internal partnerRegistrationRequests;
-    EnumerableSet.AddressSet internal revokedPartners;
-    EnumerableSet.AddressSet internal users;
+    // State variables
+    EnumerableSet.AddressSet internal _partners;
+    mapping(address partner => PartnerSettings partnerSettings) internal _partnersSettings;
+    EnumerableSet.AddressSet internal _partnerRegistrationRequests;
+    EnumerableSet.AddressSet internal _revokedPartners;
+    EnumerableSet.AddressSet internal _users;
 
     // Modifiers
-
     modifier onlyExistingPartner(address partner) {
-        require(partners.contains(partner), PartnerNotRegistered(partner));
+        require(_partners.contains(partner), PartnerNotRegistered(partner));
         _;
     }
 
     modifier onlyNotExistingPartner(address partner) {
-        require(!partners.contains(partner), PartnerAlreadyRegistered(partner));
+        require(!_partners.contains(partner), PartnerAlreadyRegistered(partner));
         _;
     }
 
     modifier onlyExistingPartnerRegistrationRequest(address partner) {
-        require(partnerRegistrationRequests.contains(partner), PartnerRegistrationRequestNotFound(partner));
+        require(_partnerRegistrationRequests.contains(partner), PartnerRegistrationRequestNotFound(partner));
         _;
     }
 
     modifier onlyNotExistingPartnerRegistrationRequest(address partner) {
-        require(!partnerRegistrationRequests.contains(partner), PartnerRegistrationRequestAlreadySubmitted(partner));
+        require(!_partnerRegistrationRequests.contains(partner), PartnerRegistrationRequestAlreadySubmitted(partner));
         _;
     }
 
     modifier onlyNotRevokedPartner(address partner) {
-        require(!revokedPartners.contains(partner), PartnerIsRevoked(partner));
+        require(!_revokedPartners.contains(partner), PartnerIsRevoked(partner));
         _;
     }
 
@@ -84,8 +77,20 @@ contract WellnessHome is Ownable, IWellnessHome {
         _;
     }
 
-    constructor(address initialOwner) Ownable(initialOwner) {
-        //
+    // Constructor
+    constructor(address initialOwner) Ownable(initialOwner) { }
+
+    // External functions
+    /// @inheritdoc IWellnessHome
+    function getPartnerSettings(
+        address partner
+    )
+        external
+        view
+        onlyExistingPartner(partner)
+        returns (PartnerSettings memory)
+    {
+        return _partnersSettings[partner];
     }
 
     function requestRegistrationAsPartner(
@@ -99,8 +104,8 @@ contract WellnessHome is Ownable, IWellnessHome {
         onlyNonOwner(msg.sender)
         onlyNonUser(msg.sender)
     {
-        partnerRegistrationRequests.add(msg.sender);
-        partnerSettings[msg.sender] = PartnerSettings({
+        _partnerRegistrationRequests.add(msg.sender);
+        _partnersSettings[msg.sender] = PartnerSettings({
             soulboundTokenName: nftName,
             soulboundTokenSymbol: nftSymbol,
             soulboundTokenAddress: address(0),
@@ -116,18 +121,19 @@ contract WellnessHome is Ownable, IWellnessHome {
         onlyOwner
         onlyExistingPartnerRegistrationRequest(partner)
     {
-        partnerRegistrationRequests.remove(partner);
-        partners.add(partner);
-        // Define the Soulbound Token instance for the partner
-        PartnerSettings storage arguments = partnerSettings[partner];
+        _partnerRegistrationRequests.remove(partner);
+        _partners.add(partner);
+        PartnerSettings storage arguments = _partnersSettings[partner];
+        // TODO: use the clone proxy to instantiate the soulbound token, much more gas efficient:
+        // https://docs.openzeppelin.com/contracts/5.x/api/proxy#Clones
         WellnessSoulboundToken soulboundToken =
             new WellnessSoulboundToken(owner(), arguments.soulboundTokenName, arguments.soulboundTokenSymbol);
         arguments.soulboundTokenAddress = address(soulboundToken);
     }
 
     function revokePartnerRegistration(address partner) external onlyOwner onlyExistingPartner(partner) {
-        partners.remove(partner);
-        revokedPartners.add(partner);
+        _partners.remove(partner);
+        _revokedPartners.add(partner);
     }
 
     function registerAsUser()
@@ -136,20 +142,25 @@ contract WellnessHome is Ownable, IWellnessHome {
         onlyNonPartner(msg.sender)
         onlyNonOwner(msg.sender)
     {
-        users.add(msg.sender);
+        _users.add(msg.sender);
     }
 
+    function partnerRegistrationRequestExists(address partner) external view returns (bool) {
+        return _partnerRegistrationRequests.contains(partner);
+    }
+
+    // Public functions
     /// @inheritdoc IWellnessHome
     function isPartner(address partner) public view returns (bool) {
-        return partners.contains(partner);
+        return _partners.contains(partner);
     }
 
     function isRevokedPartner(address partner) public view returns (bool) {
-        return revokedPartners.contains(partner);
+        return _revokedPartners.contains(partner);
     }
 
     /// @inheritdoc IWellnessHome
     function isUser(address user) public view returns (bool) {
-        return users.contains(user);
+        return _users.contains(user);
     }
 }

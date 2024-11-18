@@ -2,10 +2,9 @@
 pragma solidity 0.8.28;
 
 import { Test } from "forge-std/src/Test.sol";
-import { console2 } from "forge-std/src/console2.sol";
+// import { console2 } from "forge-std/src/console2.sol";
 
 import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
-import { WellnessHomeHarness } from "./WellnessHomeHarness.sol";
 
 import {
     PartnerNotRegistered,
@@ -19,12 +18,14 @@ import {
     OwnerAddressForbidden
 } from "../src/commons/Errors.sol";
 
+import { WellnessHome } from "../src/WellnessHome.sol";
+
 contract WellnessHomeTest is Test {
     address internal owner = address(this);
-    WellnessHomeHarness internal wellnessHome;
+    WellnessHome internal wellnessHome;
 
     function setUp() public {
-        wellnessHome = new WellnessHomeHarness(owner);
+        wellnessHome = new WellnessHome(owner);
     }
 
     ///****************************************************************************************************///
@@ -147,7 +148,8 @@ contract WellnessHomeTest is Test {
     }
 
     ///****************************************************************************************************///
-    ///*********************************** approvePartnerRegistration *************************************///
+    ///*********************************** approvePartnerRegistration
+    /// *************************************///
     ///****************************************************************************************************///
 
     function test_approvePartnerRegistration() public {
@@ -223,7 +225,8 @@ contract WellnessHomeTest is Test {
     }
 
     ///****************************************************************************************************///
-    ///*************************************** revokePartnerRegistration **********************************///
+    ///*************************************** revokePartnerRegistration
+    /// **********************************///
     ///****************************************************************************************************///
     function test_revokePartnerRegistration() public {
         ///*********************************** Fixture ***********************************///
@@ -280,7 +283,8 @@ contract WellnessHomeTest is Test {
     }
 
     ///****************************************************************************************************///
-    ///****************************************** registerAsUser ******************************************///
+    ///****************************************** registerAsUser
+    /// ******************************************///
     ///****************************************************************************************************///
 
     function test_registerAsUser() public {
