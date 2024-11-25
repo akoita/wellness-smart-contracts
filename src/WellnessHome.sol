@@ -19,6 +19,8 @@ import {
     OwnerAddressForbidden
 } from "./commons/Errors.sol";
 
+import { IChallengeRewardStrategy } from "./interfaces/IChallengeRewardStrategy.sol";
+
 /// @title WellnessHome
 /// @dev Manages partner and user registrations
 contract WellnessHome is Ownable, IWellnessHome {
@@ -35,6 +37,8 @@ contract WellnessHome is Ownable, IWellnessHome {
     EnumerableSet.AddressSet internal _revokedPartners;
     /// @custom:security unused-return
     EnumerableSet.AddressSet internal _users;
+
+    IChallengeRewardStrategy internal _challengeRewardStrategy;
 
     // Modifiers
     modifier onlyExistingPartner(address partner) {
@@ -94,6 +98,10 @@ contract WellnessHome is Ownable, IWellnessHome {
     // Constructor
     constructor(address initialOwner) Ownable(initialOwner) { }
 
+    function setChallengeRewardStrategy(IChallengeRewardStrategy challengeRewardStrategy_) external onlyOwner {
+        _challengeRewardStrategy = challengeRewardStrategy_;
+    }
+
     // External functions
     /// @inheritdoc IWellnessHome
     function getPartnerSettings(
@@ -140,12 +148,20 @@ contract WellnessHome is Ownable, IWellnessHome {
     {
         _partnerRegistrationRequests.remove(partner);
         _partners.add(partner);
+
         PartnerSettings storage arguments = _partnersSettings[partner];
+
         // TODO: use the clone proxy to instantiate the soulbound token, much more gas efficient:
         // https://docs.openzeppelin.com/contracts/5.x/api/proxy#Clones
+        // WellnessHome is the default admin of the soulbound token
         WellnessSoulboundToken soulboundToken =
-            new WellnessSoulboundToken(owner(), arguments.soulboundTokenName, arguments.soulboundTokenSymbol);
+            new WellnessSoulboundToken(address(this), arguments.soulboundTokenName, arguments.soulboundTokenSymbol);
         arguments.soulboundTokenAddress = address(soulboundToken);
+
+        // Grant admin role to the owner on the soulbound token
+        soulboundToken.grantAdminRole(owner());
+        // Grant MinterRole to the challenge reward strategy on the soulbound token
+        soulboundToken.grantMinterRole(address(_challengeRewardStrategy));
     }
 
     function revokePartnerRegistration(address partner) external onlyOwner onlyExistingPartner(partner) {

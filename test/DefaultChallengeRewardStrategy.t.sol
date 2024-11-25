@@ -3,11 +3,6 @@ pragma solidity 0.8.28;
 
 import { WellnessBaseTest } from "./WellnessBaseTest.t.sol";
 
-import { DefaultChallengeRewardStrategy } from "../src/modules/DefaultChallengeRewardStrategy.sol";
-import { PartnerChallengeCompletionValidationStrategy } from
-    "../src/modules/PartnerChallengeCompletionValidationStrategy.sol";
-import { ChallengeManager } from "../src/ChallengeManager.sol";
-import { WellnessHome } from "../src/WellnessHome.sol";
 import { ChallengeCompletionSubmitted } from "../src/commons/events.sol";
 import {
     ChallengeCompletion,
@@ -24,38 +19,8 @@ import {
 } from "../src/commons/Errors.sol";
 
 contract DefaultChallengeRewardStrategyTest is WellnessBaseTest {
-    address internal owner = address(this);
-    ChallengeManager internal challengeManager;
-    WellnessHome internal wellnessHome;
-    PartnerChallengeCompletionValidationStrategy internal challengeCompletionValidationStrategy;
-    DefaultChallengeRewardStrategy internal challengeRewardStrategy;
-
     function setUp() public override {
         super.setUp();
-
-        wellnessHome = new WellnessHome(owner);
-
-        challengeManager = new ChallengeManager(owner, address(wellnessHome));
-
-        challengeCompletionValidationStrategy = new PartnerChallengeCompletionValidationStrategy(owner);
-        challengeCompletionValidationStrategy.setWellnessHome(wellnessHome);
-        challengeCompletionValidationStrategy.setChallengeManager(challengeManager);
-
-        challengeRewardStrategy = new DefaultChallengeRewardStrategy(owner);
-        challengeRewardStrategy.setChallengeManager(challengeManager);
-    }
-
-    function grantChallengeCompletionValidatorRole() public {
-        challengeManager.grantChallengeCompletionValidatorRole(challengeCompletionValidationStrategy);
-    }
-
-    function grantChallengeRewardStrategyRole() public {
-        challengeManager.grantChallengeRewardStrategyRole(challengeRewardStrategy);
-    }
-
-    function grantMintRewardRole(IWellnessSoulboundToken soulboundToken, address minter) public {
-        vm.prank(owner);
-        soulboundToken.grantMinterRole(minter);
     }
 
     function test_claimReward() public {
@@ -114,11 +79,6 @@ contract DefaultChallengeRewardStrategyTest is WellnessBaseTest {
         );
         challengeManager.submitChallengeCompletion(challengeCompletion);
 
-        // grant roles
-        grantChallengeCompletionValidatorRole();
-        grantChallengeRewardStrategyRole();
-        grantMintRewardRole(soulboundToken, address(challengeRewardStrategy));
-
         // validate challenge completion
         vm.prank(partner);
         challengeCompletionValidationStrategy.evaluateChallengeCompletion(expectedChallengeCompletionId, true);
@@ -173,8 +133,6 @@ contract DefaultChallengeRewardStrategyTest is WellnessBaseTest {
         wellnessHome.requestRegistrationAsPartner("name", "symbol");
         vm.prank(owner);
         wellnessHome.approvePartnerRegistration(partner);
-        PartnerSettings memory partnerSettings = wellnessHome.getPartnerSettings(partner);
-        IWellnessSoulboundToken soulboundToken = IWellnessSoulboundToken(partnerSettings.soulboundTokenAddress);
 
         // submit challenge
         uint256 expectedChallengeId = 1;
@@ -212,11 +170,6 @@ contract DefaultChallengeRewardStrategyTest is WellnessBaseTest {
             expectedChallengeCompletionId, expectedChallengeId, user, expectedChallengeCompletion
         );
         challengeManager.submitChallengeCompletion(challengeCompletion);
-
-        // grant roles
-        grantChallengeCompletionValidatorRole();
-        grantChallengeRewardStrategyRole();
-        grantMintRewardRole(soulboundToken, address(challengeRewardStrategy));
 
         ///************************************* Preconditions ******************************///
         // challenge completion has not been evaluated yet
@@ -253,8 +206,6 @@ contract DefaultChallengeRewardStrategyTest is WellnessBaseTest {
         wellnessHome.requestRegistrationAsPartner("name", "symbol");
         vm.prank(owner);
         wellnessHome.approvePartnerRegistration(partner);
-        PartnerSettings memory partnerSettings = wellnessHome.getPartnerSettings(partner);
-        IWellnessSoulboundToken soulboundToken = IWellnessSoulboundToken(partnerSettings.soulboundTokenAddress);
 
         // submit challenge
         uint256 expectedChallengeId = 1;
@@ -292,11 +243,6 @@ contract DefaultChallengeRewardStrategyTest is WellnessBaseTest {
             expectedChallengeCompletionId, expectedChallengeId, user, expectedChallengeCompletion
         );
         challengeManager.submitChallengeCompletion(challengeCompletion);
-
-        // grant roles
-        grantChallengeCompletionValidatorRole();
-        grantChallengeRewardStrategyRole();
-        grantMintRewardRole(soulboundToken, address(challengeRewardStrategy));
 
         // validate challenge completion
         vm.prank(partner);
@@ -391,8 +337,6 @@ contract DefaultChallengeRewardStrategyTest is WellnessBaseTest {
         wellnessHome.requestRegistrationAsPartner("name", "symbol");
         vm.prank(owner);
         wellnessHome.approvePartnerRegistration(partner);
-        PartnerSettings memory partnerSettings = wellnessHome.getPartnerSettings(partner);
-        IWellnessSoulboundToken soulboundToken = IWellnessSoulboundToken(partnerSettings.soulboundTokenAddress);
 
         // submit challenge
         uint256 expectedChallengeId = 1;
@@ -421,11 +365,6 @@ contract DefaultChallengeRewardStrategyTest is WellnessBaseTest {
         // submit challenge completion
         vm.prank(user1);
         challengeManager.submitChallengeCompletion(challengeCompletion);
-
-        // grant roles
-        grantChallengeCompletionValidatorRole();
-        grantChallengeRewardStrategyRole();
-        grantMintRewardRole(soulboundToken, address(challengeRewardStrategy));
 
         // validate challenge completion
         vm.prank(partner);

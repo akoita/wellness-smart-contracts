@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.28;
 
-import { Test } from "forge-std/src/Test.sol";
 // import { console2 } from "forge-std/src/console2.sol";
 
 import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
@@ -18,14 +17,11 @@ import {
     OwnerAddressForbidden
 } from "../src/commons/Errors.sol";
 
-import { WellnessHome } from "../src/WellnessHome.sol";
+import { WellnessBaseTest } from "./WellnessBaseTest.t.sol";
 
-contract WellnessHomeTest is Test {
-    address internal owner = address(this);
-    WellnessHome internal wellnessHome;
-
-    function setUp() public {
-        wellnessHome = new WellnessHome(owner);
+contract WellnessHomeTest is WellnessBaseTest {
+    function setUp() public override {
+        super.setUp();
     }
 
     ///****************************************************************************************************///

@@ -10,13 +10,9 @@ import {
     Challenge,
     ChallengeState
 } from "../src/types/DataTypes.sol";
-import { WellnessHome } from "../src/WellnessHome.sol";
-import { ChallengeManager } from "../src/ChallengeManager.sol";
-import { PartnerChallengeCompletionValidationStrategy } from
-    "../src/modules/PartnerChallengeCompletionValidationStrategy.sol";
-import { DefaultChallengeRewardStrategy } from "../src/modules/DefaultChallengeRewardStrategy.sol";
+
 import { ChallengeCompletionSubmitted } from "../src/commons/events.sol";
-import { WellnessSoulboundToken } from "../src/WellnessSoulboundToken.sol";
+
 import {
     NonExistingChallengeCompletion,
     InvalidChallengeSubmitter,
@@ -35,35 +31,9 @@ contract PartnerChallengeCompletionValidationStrategyTest is WellnessBaseTest {
         address[] users;
     }
 
-    address internal owner = address(this);
-    ChallengeManager internal challengeManager;
-    WellnessHome internal wellnessHome;
-    PartnerChallengeCompletionValidationStrategy internal challengeCompletionValidationStrategy;
-    DefaultChallengeRewardStrategy internal challengeRewardStrategy;
-    WellnessSoulboundToken internal soulboundToken;
-
     function setUp() public override {
         super.setUp();
-
-        wellnessHome = new WellnessHome(owner);
-
-        challengeManager = new ChallengeManager(owner, address(wellnessHome));
-
-        challengeCompletionValidationStrategy = new PartnerChallengeCompletionValidationStrategy(owner);
-        challengeCompletionValidationStrategy.setWellnessHome(wellnessHome);
-        challengeCompletionValidationStrategy.setChallengeManager(challengeManager);
-
-        challengeRewardStrategy = new DefaultChallengeRewardStrategy(owner);
-        challengeRewardStrategy.setChallengeManager(challengeManager);
     }
-
-    function grantChallengeCompletionValidatorRole() public {
-        challengeManager.grantChallengeCompletionValidatorRole(challengeCompletionValidationStrategy);
-    }
-
-    // function grantChallengeRewardStrategyRole() public {
-    //     challengeManager.grantChallengeRewardStrategyRole(challengeRewardStrategy);
-    // }
 
     function test_validateChallengeCompletion() public {
         ///*********************************** Fixture ***********************************///
@@ -118,10 +88,6 @@ contract PartnerChallengeCompletionValidationStrategyTest is WellnessBaseTest {
             expectedChallengeCompletionId, expectedChallengeId, user, expectedChallengeCompletion
         );
         challengeManager.submitChallengeCompletion(challengeCompletion);
-
-        // grant roles
-        grantChallengeCompletionValidatorRole();
-        // grantChallengeRewardStrategyRole();
 
         ///************************************* Preconditions ******************************///
         // challenge completion should not be approved yet
@@ -254,9 +220,6 @@ contract PartnerChallengeCompletionValidationStrategyTest is WellnessBaseTest {
         );
         challengeManager.submitChallengeCompletion(challengeCompletion);
 
-        // grant roles
-        grantChallengeCompletionValidatorRole();
-
         // another partner
         address anotherPartner = makeAddr("anotherPartner");
         vm.prank(anotherPartner);
@@ -353,9 +316,6 @@ contract PartnerChallengeCompletionValidationStrategyTest is WellnessBaseTest {
         );
         challengeManager.submitChallengeCompletion(challengeCompletion2);
 
-        // grant roles
-        grantChallengeCompletionValidatorRole();
-
         // evaluate challenge completions
         vm.startPrank(partner);
         challengeCompletionValidationStrategy.evaluateChallengeCompletion(expectedChallengeCompletion1Id, true);
@@ -448,6 +408,10 @@ contract PartnerChallengeCompletionValidationStrategyTest is WellnessBaseTest {
         );
         challengeManager.submitChallengeCompletion(challengeCompletion);
 
+        // Remove the challenge completion validator role from the challenge completion validation strategy
+        vm.prank(owner);
+        challengeManager.revokeChallengeCompletionValidatorRole(challengeCompletionValidationStrategy);
+
         ///************************************* Preconditions ******************************///
         // challengeCompletionValidationStrategy should not have the challenge completion validator role
         assertFalse(
@@ -538,9 +502,6 @@ contract PartnerChallengeCompletionValidationStrategyTest is WellnessBaseTest {
         challengeManager.submitChallengeCompletion(challengeCompletion2);
         vm.prank(setup.users[2]);
         challengeManager.submitChallengeCompletion(challengeCompletion3);
-
-        // grant roles
-        grantChallengeCompletionValidatorRole();
 
         // validate challenge completions
         vm.startPrank(setup.partner);

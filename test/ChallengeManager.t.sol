@@ -5,12 +5,6 @@ pragma solidity 0.8.28;
 
 import { WellnessBaseTest } from "./WellnessBaseTest.t.sol";
 
-import { WellnessHome } from "../src/WellnessHome.sol";
-import { ChallengeManager } from "../src/ChallengeManager.sol";
-import { PartnerChallengeCompletionValidationStrategy } from
-    "../src/modules/PartnerChallengeCompletionValidationStrategy.sol";
-import { DefaultChallengeRewardStrategy } from "../src/modules/DefaultChallengeRewardStrategy.sol";
-import { WellnessSoulboundToken } from "../src/WellnessSoulboundToken.sol";
 import {
     Challenge,
     ChallengeTheme,
@@ -38,34 +32,8 @@ import {
 } from "../src/commons/events.sol";
 
 contract ChallengeManagerTest is WellnessBaseTest {
-    address internal owner = address(this);
-    ChallengeManager internal challengeManager;
-    WellnessHome internal wellnessHome;
-    PartnerChallengeCompletionValidationStrategy internal challengeCompletionValidationStrategy;
-    DefaultChallengeRewardStrategy internal challengeRewardStrategy;
-    WellnessSoulboundToken internal soulboundToken;
-
     function setUp() public override {
         super.setUp();
-
-        wellnessHome = new WellnessHome(owner);
-
-        challengeManager = new ChallengeManager(owner, address(wellnessHome));
-
-        challengeCompletionValidationStrategy = new PartnerChallengeCompletionValidationStrategy(owner);
-        challengeCompletionValidationStrategy.setWellnessHome(wellnessHome);
-        challengeCompletionValidationStrategy.setChallengeManager(challengeManager);
-
-        challengeRewardStrategy = new DefaultChallengeRewardStrategy(owner);
-        challengeRewardStrategy.setChallengeManager(challengeManager);
-    }
-
-    function grantChallengeCompletionValidatorRole() public {
-        challengeManager.grantChallengeCompletionValidatorRole(challengeCompletionValidationStrategy);
-    }
-
-    function grantChallengeRewardStrategyRole() public {
-        challengeManager.grantChallengeRewardStrategyRole(challengeRewardStrategy);
     }
 
     function test_submitChallenge() public {
@@ -860,7 +828,6 @@ contract ChallengeManagerTest is WellnessBaseTest {
         challengeManager.submitChallengeCompletion(challengeCompletion2);
 
         // approve challenge completions
-        grantChallengeCompletionValidatorRole();
         vm.startPrank(partner);
         challengeCompletionValidationStrategy.evaluateChallengeCompletion(expectedChallengeCompletionId1, true);
         challengeCompletionValidationStrategy.evaluateChallengeCompletion(expectedChallengeCompletionId2, true);
