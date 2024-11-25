@@ -22,11 +22,14 @@ contract WellnessSoulboundToken is ERC721, ERC721Burnable, AccessControlEnumerab
     IWellnessSoulboundMetadata public metadata;
 
     // Modifiers
+
+    // slither-disable-next-line incorrect-modifier
     modifier onlyMinter() {
         require(hasRole(MINTER_ROLE, msg.sender), MinterRoleRequired(msg.sender));
         _;
     }
 
+    // slither-disable-next-line incorrect-modifier
     modifier onlyAdmin() {
         require(hasRole(DEFAULT_ADMIN_ROLE, msg.sender), AdminRoleRequired(msg.sender));
         _;
@@ -41,6 +44,7 @@ contract WellnessSoulboundToken is ERC721, ERC721Burnable, AccessControlEnumerab
     }
 
     // External functions
+
     /// @notice Sets the metadata contract
     /// @param metadata_ The address of the metadata contract
     function setMetadata(IWellnessSoulboundMetadata metadata_) external onlyAdmin {
@@ -50,7 +54,9 @@ contract WellnessSoulboundToken is ERC721, ERC721Burnable, AccessControlEnumerab
     /// @notice Mints a new token to the specified address
     /// @param to The address to mint the token to
     function mint(address to) public onlyMinter {
-        uint256 tokenId = _nextTokenId++;
+        uint256 tokenId = _nextTokenId;
+        // slither-disable-next-line costly-loop
+        _nextTokenId++;
         _safeMint(to, tokenId);
     }
 

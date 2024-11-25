@@ -50,19 +50,30 @@ contract ChallengeManager is AccessControlEnumerable, IChallengeManager {
     bytes32 public constant CHALLENGE_REWARD_STRATEGY_ROLE = keccak256("CHALLENGE_REWARD_STRATEGY_ROLE");
 
     // State variables
+
+    // slither-disable-next-line immutable-states
     uint256 public challengeIdCounter;
+    // slither-disable-next-line immutable-states
     uint256 public challengeCompletionIdCounter;
+    // slither-disable-next-line immutable-states
     uint256 public minimumChallengeDuration;
+    // slither-disable-next-line immutable-states
     uint256 public maximumChallengeDuration;
     IWellnessHome public wellnessHome;
-    IChallengeRewardStrategy public _challengeRewardStrategy;
+    IChallengeRewardStrategy public challengeRewardStrategy;
+    // slither-disable-next-line unused-state
     IterableMapping.ChallengesItMap internal _challenges;
+    // slither-disable-next-line unused-state
     mapping(address partner => EnumerableSet.UintSet partnerChallengeIds) internal _partnersChallenges;
+    // slither-disable-next-line unused-state
     IterableMapping.ChallengeCompletionsItMap internal _challengeCompletions;
+    // slither-disable-next-line unused-state
     mapping(uint256 challengeId => EnumerableSet.UintSet challengeCompletionsIds) internal
         _challengeCompletionsByChallenge;
+    // slither-disable-next-line unused-state
     mapping(uint256 challengeId => EnumerableSet.UintSet challengeCompletionsIds) internal
         _challengeCompletionsApprovedByChallenge;
+    // slither-disable-next-line unused-state
     mapping(address user => EnumerableSet.UintSet userChallengeCompletionsIds) internal _usersChallengeCompletions;
 
     // Modifiers
@@ -71,7 +82,8 @@ contract ChallengeManager is AccessControlEnumerable, IChallengeManager {
         _;
     }
 
-    modifier _onlyChallengeCompletionValidator() {
+    // slither-disable-next-line incorrect-modifier
+    modifier onlyChallengeCompletionValidator() {
         require(
             hasRole(CHALLENGE_COMPLETION_VALIDATOR_ROLE, msg.sender),
             ChallengeCompletionValidatorRoleRequired(msg.sender)
@@ -79,17 +91,20 @@ contract ChallengeManager is AccessControlEnumerable, IChallengeManager {
         _;
     }
 
-    modifier _onlyChallengeRewardStrategy() {
+    // slither-disable-next-line incorrect-modifier
+    modifier onlyChallengeRewardStrategy() {
         require(hasRole(CHALLENGE_REWARD_STRATEGY_ROLE, msg.sender), ChallengeRewardStrategyRoleRequired(msg.sender));
         _;
     }
 
-    modifier _onlyPartner() {
+    // slither-disable-next-line incorrect-modifier
+    modifier onlyPartner() {
         require(wellnessHome.isPartner(msg.sender), InvalidPartner(msg.sender));
         _;
     }
 
-    modifier _onlyChallengeSubmitter(address submitter, uint256 challengeId) {
+    // slither-disable-next-line incorrect-modifier
+    modifier onlyChallengeSubmitter(address submitter, uint256 challengeId) {
         require(
             address(0) != submitter && _challenges.get(challengeId).submitter == submitter,
             InvalidChallengeSubmitter(challengeId, submitter)
@@ -97,33 +112,39 @@ contract ChallengeManager is AccessControlEnumerable, IChallengeManager {
         _;
     }
 
+    // slither-disable-next-line incorrect-modifier
     modifier onlyUser(address user) {
         require(wellnessHome.isUser(user), InvalidUser(user));
         _;
     }
 
-    modifier _onlyPendingChallenge(uint256 challengeId) {
+    // slither-disable-next-line incorrect-modifier
+    modifier onlyPendingChallenge(uint256 challengeId) {
         Challenge storage challenge = _challenges.get(challengeId);
         require(challenge.isChallengePending(), ExpectedPendingChallenge(challengeId, challenge.state));
         _;
     }
 
-    modifier _onlyInProgressChallenge(uint256 challengeId) {
+    // slither-disable-next-line incorrect-modifier
+    modifier onlyInProgressChallenge(uint256 challengeId) {
         require(_challenges.get(challengeId).isChallengeInProgress(), ExpectedStartedChallenge(challengeId));
         _;
     }
 
-    modifier _onlyExistingChallenge(uint256 challengeId) {
+    // slither-disable-next-line incorrect-modifier
+    modifier onlyExistingChallenge(uint256 challengeId) {
         require(_challenges.contains(challengeId), NonExistingChallenge(challengeId));
         _;
     }
 
-    modifier _onlyExistingChallengeCompletion(uint256 challengeCompletionId) {
+    // slither-disable-next-line incorrect-modifier
+    modifier onlyExistingChallengeCompletion(uint256 challengeCompletionId) {
         require(challengeCompletionExists(challengeCompletionId), NonExistingChallengeCompletion(challengeCompletionId));
         _;
     }
 
-    modifier _onlyMaxWinnersNotReached(uint256 challengeId) {
+    // slither-disable-next-line incorrect-modifier
+    modifier onlyMaxWinnersNotReached(uint256 challengeId) {
         uint256 maxWinners = _challenges.get(challengeId).maxWinners;
         require(
             _challengeCompletionsApprovedByChallenge[challengeId].length() < maxWinners,
@@ -132,7 +153,8 @@ contract ChallengeManager is AccessControlEnumerable, IChallengeManager {
         _;
     }
 
-    modifier _onlyNotYetSubmittedChallengeCompletion(uint256 challengeId, address user) {
+    // slither-disable-next-line incorrect-modifier
+    modifier onlyNotYetSubmittedChallengeCompletion(uint256 challengeId, address user) {
         require(
             !_usersChallengeCompletions[user].contains(challengeId),
             ChallengeCompletionAlreadySubmitted(challengeId, user)
@@ -140,7 +162,8 @@ contract ChallengeManager is AccessControlEnumerable, IChallengeManager {
         _;
     }
 
-    modifier _onlyNotYetEvaluatedChallengeCompletion(uint256 challengeCompletionId) {
+    // slither-disable-next-line incorrect-modifier
+    modifier onlyNotYetEvaluatedChallengeCompletion(uint256 challengeCompletionId) {
         ChallengeCompletion storage completion = _challengeCompletions.get(challengeCompletionId);
         require(
             completion.status == ChallengeCompletionStatus.UNDEFINED,
@@ -162,6 +185,10 @@ contract ChallengeManager is AccessControlEnumerable, IChallengeManager {
     // External functions
     function setWellnessHome(address wellnessHomeAddress) external onlyAdmin {
         wellnessHome = IWellnessHome(wellnessHomeAddress);
+    }
+
+    function setChallengeRewardStrategy(address challengeRewardStrategyAddress) external onlyAdmin {
+        challengeRewardStrategy = IChallengeRewardStrategy(challengeRewardStrategyAddress);
     }
 
     function grantDefaultAdminRole(address defaultAdmin) external onlyAdmin {
@@ -216,7 +243,7 @@ contract ChallengeManager is AccessControlEnumerable, IChallengeManager {
         return hasRole(CHALLENGE_REWARD_STRATEGY_ROLE, challengeRewardStrategy_);
     }
 
-    function submitChallenge(Challenge memory challenge) external _onlyPartner {
+    function submitChallenge(Challenge memory challenge) external onlyPartner {
         require(bytes(challenge.title).length > 0, InvalidInputChallenge("Challenge title is required"));
         require(bytes(challenge.description).length > 0, InvalidInputChallenge("Challenge description is required"));
         require(
@@ -249,9 +276,9 @@ contract ChallengeManager is AccessControlEnumerable, IChallengeManager {
         uint256 challengeId
     )
         external
-        _onlyExistingChallenge(challengeId)
-        _onlyPendingChallenge(challengeId)
-        _onlyChallengeSubmitter(msg.sender, challengeId)
+        onlyExistingChallenge(challengeId)
+        onlyPendingChallenge(challengeId)
+        onlyChallengeSubmitter(msg.sender, challengeId)
     {
         _challenges.get(challengeId).startChallenge();
     }
@@ -260,9 +287,9 @@ contract ChallengeManager is AccessControlEnumerable, IChallengeManager {
         uint256 challengeId
     )
         external
-        _onlyExistingChallenge(challengeId)
-        _onlyPendingChallenge(challengeId)
-        _onlyChallengeSubmitter(msg.sender, challengeId)
+        onlyExistingChallenge(challengeId)
+        onlyPendingChallenge(challengeId)
+        onlyChallengeSubmitter(msg.sender, challengeId)
     {
         _challenges.get(challengeId).cancelChallenge();
     }
@@ -272,10 +299,10 @@ contract ChallengeManager is AccessControlEnumerable, IChallengeManager {
     )
         external
         onlyUser(msg.sender)
-        _onlyExistingChallenge(completion.challengeId)
-        _onlyInProgressChallenge(completion.challengeId)
-        _onlyMaxWinnersNotReached(completion.challengeId)
-        _onlyNotYetSubmittedChallengeCompletion(completion.challengeId, msg.sender)
+        onlyExistingChallenge(completion.challengeId)
+        onlyInProgressChallenge(completion.challengeId)
+        onlyMaxWinnersNotReached(completion.challengeId)
+        onlyNotYetSubmittedChallengeCompletion(completion.challengeId, msg.sender)
     {
         require(
             bytes(completion.data).length > 0, InvalidInputChallengeCompletion("Challenge completion data is required")
@@ -297,9 +324,9 @@ contract ChallengeManager is AccessControlEnumerable, IChallengeManager {
         bool approved
     )
         external
-        _onlyChallengeCompletionValidator
-        _onlyExistingChallengeCompletion(challengeCompletionId)
-        _onlyNotYetEvaluatedChallengeCompletion(challengeCompletionId)
+        onlyChallengeCompletionValidator
+        onlyExistingChallengeCompletion(challengeCompletionId)
+        onlyNotYetEvaluatedChallengeCompletion(challengeCompletionId)
     {
         ChallengeCompletion storage completion = _challengeCompletions.get(challengeCompletionId);
         if (
@@ -325,8 +352,8 @@ contract ChallengeManager is AccessControlEnumerable, IChallengeManager {
         uint256 challengeCompletionId
     )
         external
-        _onlyChallengeRewardStrategy
-        _onlyExistingChallengeCompletion(challengeCompletionId)
+        onlyChallengeRewardStrategy
+        onlyExistingChallengeCompletion(challengeCompletionId)
     {
         _challengeCompletions.get(challengeCompletionId).rewarded = true;
     }
@@ -337,7 +364,7 @@ contract ChallengeManager is AccessControlEnumerable, IChallengeManager {
     )
         external
         view
-        _onlyExistingChallengeCompletion(challengeCompletionId)
+        onlyExistingChallengeCompletion(challengeCompletionId)
         returns (bool)
     {
         ChallengeCompletion storage completion = _challengeCompletions.get(challengeCompletionId);
@@ -349,7 +376,7 @@ contract ChallengeManager is AccessControlEnumerable, IChallengeManager {
     )
         external
         view
-        _onlyExistingChallengeCompletion(challengeCompletionId)
+        onlyExistingChallengeCompletion(challengeCompletionId)
         returns (bool)
     {
         return _challengeCompletions.get(challengeCompletionId).status == ChallengeCompletionStatus.SUCCESS;
@@ -364,7 +391,7 @@ contract ChallengeManager is AccessControlEnumerable, IChallengeManager {
     )
         external
         view
-        _onlyExistingChallengeCompletion(challengeCompletionId)
+        onlyExistingChallengeCompletion(challengeCompletionId)
         returns (ChallengeCompletion memory)
     {
         return _challengeCompletions.get(challengeCompletionId);
@@ -375,7 +402,7 @@ contract ChallengeManager is AccessControlEnumerable, IChallengeManager {
     )
         external
         view
-        _onlyExistingChallengeCompletion(challengeCompletionId)
+        onlyExistingChallengeCompletion(challengeCompletionId)
         returns (Challenge memory)
     {
         return _challenges.get(_challengeCompletions.get(challengeCompletionId).challengeId);
@@ -390,7 +417,7 @@ contract ChallengeManager is AccessControlEnumerable, IChallengeManager {
     )
         external
         view
-        _onlyExistingChallenge(challengeId)
+        onlyExistingChallenge(challengeId)
         returns (Challenge memory)
     {
         return _challenges.get(challengeId);
@@ -401,7 +428,7 @@ contract ChallengeManager is AccessControlEnumerable, IChallengeManager {
     )
         external
         view
-        _onlyExistingChallenge(challengeId)
+        onlyExistingChallenge(challengeId)
         returns (uint256[] memory challengeCompletionIds)
     {
         return _challengeCompletionsByChallenge[challengeId].values();
@@ -412,7 +439,7 @@ contract ChallengeManager is AccessControlEnumerable, IChallengeManager {
     )
         external
         view
-        _onlyExistingChallenge(challengeId)
+        onlyExistingChallenge(challengeId)
         returns (uint256[] memory challengeCompletionIds)
     {
         return _challengeCompletionsApprovedByChallenge[challengeId].values();

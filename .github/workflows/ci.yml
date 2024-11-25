@@ -34,6 +34,35 @@ jobs:
         run: |
           echo "## Lint result" >> $GITHUB_STEP_SUMMARY
           echo "✅ Passed" >> $GITHUB_STEP_SUMMARY
+  slither:
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: "Check out the repo"
+        uses: "actions/checkout@v4"
+
+      - name: "Install Foundry"
+        uses: "foundry-rs/foundry-toolchain@v1"
+
+      - name: "Install Node.js"
+        uses: "actions/setup-node@v4"
+        with:
+          node-version: "20"
+
+      - name: "Set up Python"
+        uses: "actions/setup-python@v5"
+        with:
+          python-version: "3.x"
+
+      - name: "Install Slither"
+        run: |
+          python3 -m pip install --upgrade pip
+          pip install slither-analyzer
+
+      - name: "Install the Node.js dependencies"
+        run: "npm ci"
+
+      - name: "Run Slither analysis"
+        run: "slither ."
 
   build:
     runs-on: "ubuntu-latest"

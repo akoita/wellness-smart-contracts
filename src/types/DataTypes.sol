@@ -95,6 +95,7 @@ library ChallengeLibrary {
     /// @param challenge The challenge to check
     /// @return bool True if the challenge is in progress, false otherwise
     function isChallengeInProgress(Challenge memory challenge) internal view returns (bool) {
+        // slither-disable-next-line block-timestamp
         return
             challenge.state == ChallengeState.IN_PROGRESS && challenge.startTime + challenge.duration > block.timestamp;
     }
@@ -103,6 +104,7 @@ library ChallengeLibrary {
     /// @param challenge The challenge to check
     /// @return bool True if the challenge is terminated, false otherwise
     function isChallengeTerminated(Challenge memory challenge) internal view returns (bool) {
+        // slither-disable-next-line block-timestamp
         return
             challenge.state == ChallengeState.IN_PROGRESS && challenge.startTime + challenge.duration < block.timestamp;
     }

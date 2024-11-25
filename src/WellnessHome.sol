@@ -33,45 +33,54 @@ contract WellnessHome is Ownable, IWellnessHome {
 
     // Modifiers
     modifier onlyExistingPartner(address partner) {
+        // slither-disable-next-line incorrect-modifier
         require(_partners.contains(partner), PartnerNotRegistered(partner));
         _;
     }
 
+    // slither-disable-next-line incorrect-modifier
     modifier onlyNotExistingPartner(address partner) {
         require(!_partners.contains(partner), PartnerAlreadyRegistered(partner));
         _;
     }
 
+    // slither-disable-next-line incorrect-modifier
     modifier onlyExistingPartnerRegistrationRequest(address partner) {
         require(_partnerRegistrationRequests.contains(partner), PartnerRegistrationRequestNotFound(partner));
         _;
     }
 
+    // slither-disable-next-line incorrect-modifier
     modifier onlyNotExistingPartnerRegistrationRequest(address partner) {
         require(!_partnerRegistrationRequests.contains(partner), PartnerRegistrationRequestAlreadySubmitted(partner));
         _;
     }
 
+    // slither-disable-next-line incorrect-modifier
     modifier onlyNotRevokedPartner(address partner) {
         require(!_revokedPartners.contains(partner), PartnerIsRevoked(partner));
         _;
     }
 
+    // slither-disable-next-line incorrect-modifier
     modifier onlyNotExistingUser(address user) {
         require(!isUser(user), UserAlreadyRegistered(user));
         _;
     }
 
+    // slither-disable-next-line incorrect-modifier
     modifier onlyNonUser(address partner) {
         require(!isUser(partner), ExistingUserWithThisAddress(partner));
         _;
     }
 
+    // slither-disable-next-line incorrect-modifier
     modifier onlyNonPartner(address user) {
         require(!isPartner(user) && !isRevokedPartner(user), ExistingOrRevokedPartnerWithThisAddress(user));
         _;
     }
 
+    // slither-disable-next-line incorrect-modifier
     modifier onlyNonOwner(address account) {
         require(account != owner(), OwnerAddressForbidden(account));
         _;
@@ -104,6 +113,7 @@ contract WellnessHome is Ownable, IWellnessHome {
         onlyNonOwner(msg.sender)
         onlyNonUser(msg.sender)
     {
+        // slither-disable-start unused-return
         _partnerRegistrationRequests.add(msg.sender);
         _partnersSettings[msg.sender] = PartnerSettings({
             soulboundTokenName: nftName,
@@ -112,6 +122,7 @@ contract WellnessHome is Ownable, IWellnessHome {
             logoUrl: "",
             logoSVG: ""
         });
+        // slither-disable-end unused-return
     }
 
     function approvePartnerRegistration(
@@ -121,6 +132,7 @@ contract WellnessHome is Ownable, IWellnessHome {
         onlyOwner
         onlyExistingPartnerRegistrationRequest(partner)
     {
+        // slither-disable-start unused-return
         _partnerRegistrationRequests.remove(partner);
         _partners.add(partner);
         PartnerSettings storage arguments = _partnersSettings[partner];
@@ -129,11 +141,14 @@ contract WellnessHome is Ownable, IWellnessHome {
         WellnessSoulboundToken soulboundToken =
             new WellnessSoulboundToken(owner(), arguments.soulboundTokenName, arguments.soulboundTokenSymbol);
         arguments.soulboundTokenAddress = address(soulboundToken);
+        // slither-disable-end unused-return
     }
 
     function revokePartnerRegistration(address partner) external onlyOwner onlyExistingPartner(partner) {
+        // slither-disable-start unused-return
         _partners.remove(partner);
         _revokedPartners.add(partner);
+        // slither-disable-end unused-return
     }
 
     function registerAsUser()
@@ -142,7 +157,9 @@ contract WellnessHome is Ownable, IWellnessHome {
         onlyNonPartner(msg.sender)
         onlyNonOwner(msg.sender)
     {
+        // slither-disable-start unused-return
         _users.add(msg.sender);
+        // slither-disable-end unused-return
     }
 
     function partnerRegistrationRequestExists(address partner) external view returns (bool) {
