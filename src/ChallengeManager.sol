@@ -51,32 +51,36 @@ contract ChallengeManager is AccessControlEnumerable, IChallengeManager {
 
     // State variables
 
-    // slither-disable-next-line immutable-states
+    // slither-disable-start unused-state
+
     uint256 public challengeIdCounter;
-    // slither-disable-next-line immutable-states
+
     uint256 public challengeCompletionIdCounter;
-    // slither-disable-next-line immutable-states
+
     uint256 public minimumChallengeDuration;
-    // slither-disable-next-line immutable-states
+
     uint256 public maximumChallengeDuration;
     IWellnessHome public wellnessHome;
     IChallengeRewardStrategy public challengeRewardStrategy;
-    // slither-disable-next-line unused-state
+
     IterableMapping.ChallengesItMap internal _challenges;
-    // slither-disable-next-line unused-state
+
     mapping(address partner => EnumerableSet.UintSet partnerChallengeIds) internal _partnersChallenges;
-    // slither-disable-next-line unused-state
+
     IterableMapping.ChallengeCompletionsItMap internal _challengeCompletions;
-    // slither-disable-next-line unused-state
+
     mapping(uint256 challengeId => EnumerableSet.UintSet challengeCompletionsIds) internal
         _challengeCompletionsByChallenge;
-    // slither-disable-next-line unused-state
+
     mapping(uint256 challengeId => EnumerableSet.UintSet challengeCompletionsIds) internal
         _challengeCompletionsApprovedByChallenge;
-    // slither-disable-next-line unused-state
+
     mapping(address user => EnumerableSet.UintSet userChallengeCompletionsIds) internal _usersChallengeCompletions;
 
+    // slither-disable-end unused-state
+
     // Modifiers
+
     modifier onlyAdmin() {
         require(hasRole(DEFAULT_ADMIN_ROLE, msg.sender), AdminRoleRequired(msg.sender));
         _;

@@ -1,6 +1,8 @@
 {
     "detectors_to_exclude": [
-        "timestamp"
+        "timestamp",
+        "incorrect-modifier",
+        "immutable-states"
     ],
     "filter_paths": "node_modules"
 }

@@ -25,10 +25,15 @@ contract WellnessHome is Ownable, IWellnessHome {
     using EnumerableSet for EnumerableSet.AddressSet;
 
     // State variables
+
+    /// @custom:security unused-return
     EnumerableSet.AddressSet internal _partners;
     mapping(address partner => PartnerSettings partnerSettings) internal _partnersSettings;
+    /// @custom:security unused-return
     EnumerableSet.AddressSet internal _partnerRegistrationRequests;
+    /// @custom:security unused-return
     EnumerableSet.AddressSet internal _revokedPartners;
+    /// @custom:security unused-return
     EnumerableSet.AddressSet internal _users;
 
     // Modifiers
@@ -102,6 +107,7 @@ contract WellnessHome is Ownable, IWellnessHome {
         return _partnersSettings[partner];
     }
 
+    // slither-disable-start unused-return
     function requestRegistrationAsPartner(
         string memory nftName,
         string memory nftSymbol
@@ -113,7 +119,6 @@ contract WellnessHome is Ownable, IWellnessHome {
         onlyNonOwner(msg.sender)
         onlyNonUser(msg.sender)
     {
-        // slither-disable-start unused-return
         _partnerRegistrationRequests.add(msg.sender);
         _partnersSettings[msg.sender] = PartnerSettings({
             soulboundTokenName: nftName,
@@ -122,9 +127,10 @@ contract WellnessHome is Ownable, IWellnessHome {
             logoUrl: "",
             logoSVG: ""
         });
-        // slither-disable-end unused-return
     }
+    // slither-disable-end unused-return
 
+    // slither-disable-start unused-return
     function approvePartnerRegistration(
         address partner
     )
@@ -132,7 +138,6 @@ contract WellnessHome is Ownable, IWellnessHome {
         onlyOwner
         onlyExistingPartnerRegistrationRequest(partner)
     {
-        // slither-disable-start unused-return
         _partnerRegistrationRequests.remove(partner);
         _partners.add(partner);
         PartnerSettings storage arguments = _partnersSettings[partner];
@@ -141,14 +146,11 @@ contract WellnessHome is Ownable, IWellnessHome {
         WellnessSoulboundToken soulboundToken =
             new WellnessSoulboundToken(owner(), arguments.soulboundTokenName, arguments.soulboundTokenSymbol);
         arguments.soulboundTokenAddress = address(soulboundToken);
-        // slither-disable-end unused-return
     }
 
     function revokePartnerRegistration(address partner) external onlyOwner onlyExistingPartner(partner) {
-        // slither-disable-start unused-return
         _partners.remove(partner);
         _revokedPartners.add(partner);
-        // slither-disable-end unused-return
     }
 
     function registerAsUser()

@@ -53,12 +53,13 @@ contract WellnessSoulboundToken is ERC721, ERC721Burnable, AccessControlEnumerab
 
     /// @notice Mints a new token to the specified address
     /// @param to The address to mint the token to
+    // slither-disable-start costly-loop
     function mint(address to) public onlyMinter {
         uint256 tokenId = _nextTokenId;
-        // slither-disable-next-line costly-loop
         _nextTokenId++;
         _safeMint(to, tokenId);
     }
+    // slither-disable-end costly-loop
 
     /// @notice Mints multiple tokens as a reward to the specified address
     /// @param to The address to mint the tokens to
