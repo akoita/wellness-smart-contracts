@@ -82,9 +82,7 @@ contract DefaultChallengeRewardStrategy is Ownable, IChallengeRewardStrategy {
     }
 
     /// @inheritdoc IChallengeRewardStrategy
-    function claimReward(
-        uint256 challengeCompletionId
-    )
+    function claimReward(uint256 challengeCompletionId)
         external
         onlyExistingChallengeCompletion(challengeCompletionId)
         onlyChallengeCompletionSubmitter(challengeCompletionId, msg.sender)

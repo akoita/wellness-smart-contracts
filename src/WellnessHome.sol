@@ -104,9 +104,7 @@ contract WellnessHome is Ownable, IWellnessHome {
 
     // External functions
     /// @inheritdoc IWellnessHome
-    function getPartnerSettings(
-        address partner
-    )
+    function getPartnerSettings(address partner)
         external
         view
         onlyExistingPartner(partner)
@@ -139,9 +137,7 @@ contract WellnessHome is Ownable, IWellnessHome {
     // slither-disable-end unused-return
 
     // slither-disable-start unused-return
-    function approvePartnerRegistration(
-        address partner
-    )
+    function approvePartnerRegistration(address partner)
         external
         onlyOwner
         onlyExistingPartnerRegistrationRequest(partner)

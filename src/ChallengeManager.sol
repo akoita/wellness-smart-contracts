@@ -207,27 +207,21 @@ contract ChallengeManager is AccessControlEnumerable, IChallengeManager {
         return hasRole(DEFAULT_ADMIN_ROLE, admin);
     }
 
-    function grantChallengeCompletionValidatorRole(
-        IChallengeCompletionValidationStrategy challengeCompletionValidator
-    )
+    function grantChallengeCompletionValidatorRole(IChallengeCompletionValidationStrategy challengeCompletionValidator)
         external
         onlyAdmin
     {
         _grantRole(CHALLENGE_COMPLETION_VALIDATOR_ROLE, address(challengeCompletionValidator));
     }
 
-    function revokeChallengeCompletionValidatorRole(
-        IChallengeCompletionValidationStrategy challengeCompletionValidator
-    )
+    function revokeChallengeCompletionValidatorRole(IChallengeCompletionValidationStrategy challengeCompletionValidator)
         external
         onlyAdmin
     {
         _revokeRole(CHALLENGE_COMPLETION_VALIDATOR_ROLE, address(challengeCompletionValidator));
     }
 
-    function hasChallengeCompletionValidatorRole(
-        IChallengeCompletionValidationStrategy challengeCompletionValidator
-    )
+    function hasChallengeCompletionValidatorRole(IChallengeCompletionValidationStrategy challengeCompletionValidator)
         external
         view
         returns (bool)
@@ -276,9 +270,7 @@ contract ChallengeManager is AccessControlEnumerable, IChallengeManager {
         emit ChallengeSubmitted(challenge.id, msg.sender, challenge.theme, challenge);
     }
 
-    function startChallenge(
-        uint256 challengeId
-    )
+    function startChallenge(uint256 challengeId)
         external
         onlyExistingChallenge(challengeId)
         onlyPendingChallenge(challengeId)
@@ -287,9 +279,7 @@ contract ChallengeManager is AccessControlEnumerable, IChallengeManager {
         _challenges.get(challengeId).startChallenge();
     }
 
-    function cancelChallenge(
-        uint256 challengeId
-    )
+    function cancelChallenge(uint256 challengeId)
         external
         onlyExistingChallenge(challengeId)
         onlyPendingChallenge(challengeId)
@@ -298,9 +288,7 @@ contract ChallengeManager is AccessControlEnumerable, IChallengeManager {
         _challenges.get(challengeId).cancelChallenge();
     }
 
-    function submitChallengeCompletion(
-        ChallengeCompletion memory completion
-    )
+    function submitChallengeCompletion(ChallengeCompletion memory completion)
         external
         onlyUser(msg.sender)
         onlyExistingChallenge(completion.challengeId)
@@ -352,9 +340,7 @@ contract ChallengeManager is AccessControlEnumerable, IChallengeManager {
     }
 
     /// @inheritdoc IChallengeManager
-    function updateRewardStateAsClaimed(
-        uint256 challengeCompletionId
-    )
+    function updateRewardStateAsClaimed(uint256 challengeCompletionId)
         external
         onlyChallengeRewardStrategy
         onlyExistingChallengeCompletion(challengeCompletionId)
@@ -363,9 +349,7 @@ contract ChallengeManager is AccessControlEnumerable, IChallengeManager {
     }
 
     /// @inheritdoc IChallengeManager
-    function hasPendingReward(
-        uint256 challengeCompletionId
-    )
+    function hasPendingReward(uint256 challengeCompletionId)
         external
         view
         onlyExistingChallengeCompletion(challengeCompletionId)
@@ -375,9 +359,7 @@ contract ChallengeManager is AccessControlEnumerable, IChallengeManager {
         return completion.status == ChallengeCompletionStatus.SUCCESS && !completion.rewarded;
     }
 
-    function isChallengeCompletionApproved(
-        uint256 challengeCompletionId
-    )
+    function isChallengeCompletionApproved(uint256 challengeCompletionId)
         external
         view
         onlyExistingChallengeCompletion(challengeCompletionId)
@@ -390,9 +372,7 @@ contract ChallengeManager is AccessControlEnumerable, IChallengeManager {
         return challengeCompletionId != 0 && _challengeCompletions.contains(challengeCompletionId);
     }
 
-    function getChallengeCompletion(
-        uint256 challengeCompletionId
-    )
+    function getChallengeCompletion(uint256 challengeCompletionId)
         external
         view
         onlyExistingChallengeCompletion(challengeCompletionId)
@@ -401,9 +381,7 @@ contract ChallengeManager is AccessControlEnumerable, IChallengeManager {
         return _challengeCompletions.get(challengeCompletionId);
     }
 
-    function getChallengeByCompletion(
-        uint256 challengeCompletionId
-    )
+    function getChallengeByCompletion(uint256 challengeCompletionId)
         external
         view
         onlyExistingChallengeCompletion(challengeCompletionId)
@@ -416,9 +394,7 @@ contract ChallengeManager is AccessControlEnumerable, IChallengeManager {
         return challengeId != 0 && _challenges.contains(challengeId);
     }
 
-    function getChallenge(
-        uint256 challengeId
-    )
+    function getChallenge(uint256 challengeId)
         external
         view
         onlyExistingChallenge(challengeId)
@@ -427,9 +403,7 @@ contract ChallengeManager is AccessControlEnumerable, IChallengeManager {
         return _challenges.get(challengeId);
     }
 
-    function getChallengeCompletionsByChallenge(
-        uint256 challengeId
-    )
+    function getChallengeCompletionsByChallenge(uint256 challengeId)
         external
         view
         onlyExistingChallenge(challengeId)
@@ -438,9 +412,7 @@ contract ChallengeManager is AccessControlEnumerable, IChallengeManager {
         return _challengeCompletionsByChallenge[challengeId].values();
     }
 
-    function getApprovedChallengeCompletionsByChallenge(
-        uint256 challengeId
-    )
+    function getApprovedChallengeCompletionsByChallenge(uint256 challengeId)
         external
         view
         onlyExistingChallenge(challengeId)
@@ -449,9 +421,7 @@ contract ChallengeManager is AccessControlEnumerable, IChallengeManager {
         return _challengeCompletionsApprovedByChallenge[challengeId].values();
     }
 
-    function getUserChallengeCompletions(
-        address user
-    )
+    function getUserChallengeCompletions(address user)
         external
         view
         onlyUser(user)

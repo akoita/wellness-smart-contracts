@@ -98,9 +98,7 @@ contract WellnessSoulboundToken is ERC721, ERC721Burnable, AccessControlEnumerab
     /// @notice Checks if the contract supports a given interface
     /// @param interfaceId The interface identifier
     /// @return True if the interface is supported, false otherwise
-    function supportsInterface(
-        bytes4 interfaceId
-    )
+    function supportsInterface(bytes4 interfaceId)
         public
         view
         override(ERC721, AccessControlEnumerable, IERC165)

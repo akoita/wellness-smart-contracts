@@ -192,9 +192,7 @@ library IterableMapping {
     /// @notice Gets all challenge completions in the mapping
     /// @param self The storage reference to the ChallengeCompletionsItMap
     /// @return result An array of all challenge completions
-    function values(
-        ChallengeCompletionsItMap storage self
-    )
+    function values(ChallengeCompletionsItMap storage self)
         internal
         view
         returns (ChallengeCompletion[] memory result)
