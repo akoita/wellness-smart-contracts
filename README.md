@@ -1,205 +1,106 @@
-# Foundry Template [![Open in Gitpod][gitpod-badge]][gitpod] [![Github Actions][gha-badge]][gha] [![Foundry][foundry-badge]][foundry] [![License: MIT][license-badge]][license]
+# Wellness Reward Smart Contracts
 
-[gitpod]: https://gitpod.io/#https://github.com/bbs-paris/wellness-smart-contracts
-[gitpod-badge]: https://img.shields.io/badge/Gitpod-Open%20in%20Gitpod-FFB45B?logo=gitpod
-[gha]: https://github.com/bbs-paris/wellness-smart-contracts/actions
-[gha-badge]: https://github.com/bbs-paris/wellness-smart-contracts/actions/workflows/ci.yml/badge.svg
-[foundry]: https://getfoundry.sh/
-[foundry-badge]: https://img.shields.io/badge/Built%20with-Foundry-FFDB1C.svg
-[license]: https://opensource.org/licenses/MIT
-[license-badge]: https://img.shields.io/badge/License-MIT-blue.svg
+The contracts are developed with the [Foundry](https://book.getfoundry.sh/) toolkit. The project was initialized with
+the [Foundry Template](https://github.com/PaulRBerg/foundry-template).
 
-A Foundry-based template for developing Solidity smart contracts, with sensible defaults.
+## Installation
 
-## What's Inside
+The development of the project requires functional installations of:
 
-- [Forge](https://github.com/foundry-rs/foundry/blob/master/forge): compile, test, fuzz, format, and deploy smart
-  contracts
-- [Forge Std](https://github.com/foundry-rs/forge-std): collection of helpful contracts and utilities for testing
-- [Prettier](https://github.com/prettier/prettier): code formatter for non-Solidity files
-- [Solhint](https://github.com/protofire/solhint): linter for Solidity code
+- [Foundry](https://book.getfoundry.sh/getting-started/installation/)
+- [Node.js](https://nodejs.org/en/download/)
 
-## Getting Started
-
-Click the [`Use this template`](https://github.com/PaulRBerg/foundry-template/generate) button at the top of the page to
-create a new repository with this repo as the initial state.
-
-Or, if you prefer to install the template manually:
-
-```sh
-$ mkdir my-project
-$ cd my-project
-$ forge init --template PaulRBerg/foundry-template
-$ bun install # install Solhint, Prettier, and other Node.js deps
-```
-
-If this is your first time with Foundry, check out the
-[installation](https://github.com/foundry-rs/foundry#installation) instructions.
-
-## Features
-
-This template builds upon the frameworks and libraries mentioned above, so please consult their respective documentation
-for details about their specific features.
-
-For example, if you're interested in exploring Foundry in more detail, you should look at the
-[Foundry Book](https://book.getfoundry.sh/). In particular, you may be interested in reading the
-[Writing Tests](https://book.getfoundry.sh/forge/writing-tests.html) tutorial.
-
-### Sensible Defaults
-
-This template comes with a set of sensible default configurations for you to use. These defaults can be found in the
-following files:
-
-```text
-├── .editorconfig
-├── .gitignore
-├── .prettierignore
-├── .prettierrc.yml
-├── .solhint.json
-├── foundry.toml
-└── remappings.txt
-```
-
-### VSCode Integration
-
-This template is IDE agnostic, but for the best user experience, you may want to use it in VSCode alongside Nomic
-Foundation's [Solidity extension](https://marketplace.visualstudio.com/items?itemName=NomicFoundation.hardhat-solidity).
-
-For guidance on how to integrate a Foundry project in VSCode, please refer to this
-[guide](https://book.getfoundry.sh/config/vscode).
-
-### GitHub Actions
-
-This template comes with GitHub Actions pre-configured. Your contracts will be linted and tested on every push and pull
-request made to the `main` branch.
-
-You can edit the CI script in [.github/workflows/ci.yml](./.github/workflows/ci.yml).
-
-## Installing Dependencies
-
-Foundry typically uses git submodules to manage dependencies, but this template uses Node.js packages because
-[submodules don't scale](https://twitter.com/PaulRBerg/status/1736695487057531328).
-
-This is how to install dependencies:
-
-1. Install the dependency using your preferred package manager, e.g. `bun install dependency-name`
-   - Use this syntax to install from GitHub: `bun install github:username/repo-name`
-2. Add a remapping for the dependency in [remappings.txt](./remappings.txt), e.g.
-   `dependency-name=node_modules/dependency-name`
-
-Note that OpenZeppelin Contracts is pre-installed, so you can follow that as an example.
-
-## Writing Tests
-
-To write a new test contract, you start by importing `Test` from `forge-std`, and then you inherit it in your test
-contract. Forge Std comes with a pre-instantiated [cheatcodes](https://book.getfoundry.sh/cheatcodes/) environment
-accessible via the `vm` property. If you would like to view the logs in the terminal output, you can add the `-vvv` flag
-and use [console.log](https://book.getfoundry.sh/faq?highlight=console.log#how-do-i-use-consolelog).
-
-This template comes with an example test contract [Foo.t.sol](./test/Foo.t.sol)
-
-## Usage
-
-This is a list of the most frequently needed commands.
+## Essential Commands
 
 ### Build
 
-Build the contracts:
-
-```sh
+```bash
 $ forge build
 ```
 
 ### Clean
 
-Delete the build artifacts and cache directories:
-
-```sh
+```bash
 $ forge clean
 ```
 
-### Compile
+### Tests execution
 
-Compile the contracts:
-
-```sh
-$ forge build
-```
-
-### Coverage
-
-Get a test coverage report:
-
-```sh
-$ forge coverage
-```
-
-### Deploy
-
-Deploy to Anvil:
-
-```sh
-$ forge script script/Deploy.s.sol --broadcast --fork-url http://localhost:8545
-```
-
-For this script to work, you need to have a `MNEMONIC` environment variable set to a valid
-[BIP39 mnemonic](https://iancoleman.io/bip39/).
-
-For instructions on how to deploy to a testnet or mainnet, check out the
-[Solidity Scripting](https://book.getfoundry.sh/tutorials/solidity-scripting.html) tutorial.
-
-### Format
-
-Format the contracts:
-
-```sh
-$ forge fmt
-```
-
-### Gas Usage
-
-Get a gas report:
-
-```sh
-$ forge test --gas-report
-```
-
-### Lint
-
-Lint the contracts:
-
-```sh
-$ bun run lint
-```
-
-### Test
-
-Run the tests:
-
-```sh
+```bash
 $ forge test
 ```
 
-Generate test coverage and output result to the terminal:
+### Tests execution with coverage report
 
-```sh
-$ bun run test:coverage
+```bash
+$ npm run test:coverage
 ```
 
-Generate test coverage with lcov report (you'll have to open the `./coverage/index.html` file in your browser, to do so
-simply copy paste the path):
+### Tests execution with coverage report in HTML
 
-```sh
-$ bun run test:coverage:report
+```bash
+$ npm run test:coverage:report
 ```
 
-## Related Efforts
+### Linting
 
-- [abigger87/femplate](https://github.com/abigger87/femplate)
-- [cleanunicorn/ethereum-smartcontract-template](https://github.com/cleanunicorn/ethereum-smartcontract-template)
-- [foundry-rs/forge-template](https://github.com/foundry-rs/forge-template)
-- [FrankieIsLost/forge-template](https://github.com/FrankieIsLost/forge-template)
+```bash
+$ npm run lint
+```
 
-## License
+### Formatting code
 
-This project is licensed under MIT.
+Formatting Solidity code with Forge:
+
+```bash
+$ forge fmt
+```
+
+Formatting JavaScript code with Prettier:
+
+```bash
+$ npm run prettier:write
+```
+
+## Deploying the contracts
+
+### On anvil local network
+
+Start anvil in one terminal:
+
+```bash
+$ anvil
+```
+
+Deploy the contracts from another terminal:
+
+```bash
+$ ./main.sh deploy --local
+```
+
+If the frontend project is located in the same directory as the contracts, i.e. `../wellness-frontend`, you can enable
+the copy of the artifacts to the frontend project after the deployment with:
+
+```bash
+$ ./main.sh deploy --local --copy-artifacts
+```
+
+The artifacts will be copied to the `../wellness-frontend/public/foundry-artifacts` directory.
+
+## Static Analysis
+
+[Slither](https://github.com/crytic/slither) is used to improve the quality of the code. There is a dedicated job on the
+CI pipeline to run the static analysis.
+
+But you can also run it locally. For that you will need to install slither. If you have a functionnal python
+environment, you can (install)[https://github.com/crytic/slither?tab=readme-ov-file#how-to-install] Slither as follow:
+
+```bash
+$ pip install slither-analyzer
+```
+
+An to run the static analysis on the whole project just run:
+
+```bash
+$ slither .
+```
