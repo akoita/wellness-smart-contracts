@@ -26,3 +26,5 @@ event ChallengeCompletionEvaluated(
     address indexed submitter,
     ChallengeCompletion challengeCompletion
 );
+
+event Minted(uint256 indexed tokenId, address indexed to, uint256 indexed challengeCompletionId);

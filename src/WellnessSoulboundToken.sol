@@ -3,23 +3,25 @@
 pragma solidity 0.8.28;
 
 import { ERC721 } from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import { ERC721Burnable } from "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
 import { AccessControlEnumerable } from "@openzeppelin/contracts/access/extensions/AccessControlEnumerable.sol";
 import { IERC165 } from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 
 import { AdminRoleRequired, MinterRoleRequired } from "./commons/Errors.sol";
 import { IWellnessSoulboundMetadata } from "./interfaces/IWellnessSoulboundMetadata.sol";
 import { IWellnessSoulboundToken } from "./interfaces/IWellnessSoulboundToken.sol";
+import { WellnessSoulboundTokenData } from "./types/DataTypes.sol";
+import { Minted } from "./commons/events.sol";
 
 /// @title WellnessSoulboundToken
 /// @dev ERC721 token with soulbound properties and access control
-contract WellnessSoulboundToken is ERC721, ERC721Burnable, AccessControlEnumerable, IWellnessSoulboundToken {
+contract WellnessSoulboundToken is ERC721, AccessControlEnumerable, IWellnessSoulboundToken {
     // Type declarations
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
 
     // State variables
     uint256 private _nextTokenId;
     IWellnessSoulboundMetadata public metadata;
+    mapping(uint256 tokenId => WellnessSoulboundTokenData tokenData) public tokenIdToTokenData;
 
     // Modifiers
 
@@ -54,19 +56,22 @@ contract WellnessSoulboundToken is ERC721, ERC721Burnable, AccessControlEnumerab
     /// @notice Mints a new token to the specified address
     /// @param to The address to mint the token to
     // slither-disable-start costly-loop
-    function mint(address to) public onlyMinter {
+    function mint(address to, uint256 challengeCompletionId) public onlyMinter {
         uint256 tokenId = _nextTokenId;
         _nextTokenId++;
         _safeMint(to, tokenId);
+        tokenIdToTokenData[tokenId] = WellnessSoulboundTokenData({ challengeCompletionId: challengeCompletionId });
+        emit Minted(tokenId, to, challengeCompletionId);
     }
     // slither-disable-end costly-loop
 
     /// @notice Mints multiple tokens as a reward to the specified address
     /// @param to The address to mint the tokens to
     /// @param amount The number of tokens to mint
-    function mintReward(address to, uint256 amount) external onlyMinter {
+    /// @param challengeCompletionId The id of the challenge completion
+    function mintReward(address to, uint256 amount, uint256 challengeCompletionId) external onlyMinter {
         for (uint256 i = 0; i < amount; i++) {
-            mint(to);
+            mint(to, challengeCompletionId);
         }
     }
 
