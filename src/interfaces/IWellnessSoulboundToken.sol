@@ -11,15 +11,17 @@ interface IWellnessSoulboundToken is IERC721 {
     /**
      * @notice Mints a new token to the specified address.
      * @param to The address to mint the token to.
+     * @param challengeCompletionId The id of the challenge completion.
      */
-    function mint(address to) external;
+    function mint(address to, uint256 challengeCompletionId) external;
 
     /**
      * @notice Mints a reward token to the specified address with a given amount.
      * @param to The address to mint the reward token to.
      * @param amount The amount of the reward token to mint.
+     * @param challengeCompletionId The id of the challenge completion.
      */
-    function mintReward(address to, uint256 amount) external;
+    function mintReward(address to, uint256 amount, uint256 challengeCompletionId) external;
 
     /**
      * @notice Grants the minter role to the specified address.

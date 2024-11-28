@@ -72,6 +72,11 @@ enum ChallengeCompletionStatus {
     FAILURE
 }
 
+/// @dev Data structure for wellness soulbound token
+struct WellnessSoulboundTokenData {
+    uint256 challengeCompletionId;
+}
+
 // Library
 
 /// @dev Library for challenge operations

@@ -92,6 +92,6 @@ contract DefaultChallengeRewardStrategy is Ownable, IChallengeRewardStrategy {
         // Reward claimed with the configured number of NFTs
         Challenge memory challenge = challengeManager.getChallengeByCompletion(challengeCompletionId);
         IWellnessSoulboundToken soulboundToken = IWellnessSoulboundToken(challenge.soulboundToken);
-        soulboundToken.mintReward(msg.sender, tokenRewardAmount);
+        soulboundToken.mintReward(msg.sender, tokenRewardAmount, challengeCompletionId);
     }
 }
