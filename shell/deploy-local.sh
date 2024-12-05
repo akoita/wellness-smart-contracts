@@ -4,7 +4,6 @@ set -e
 
 set -x
 
-export MNEMONIC="test test test test test test test test test test test junk"
 export API_KEY_BASESCAN="YOUR_API_KEY_BASESCAN"
 
 export COPY_ARTIFACTS_DESTINATION="$ROOT_DIR/../wellness-frontend/public/foundry-artifacts/"

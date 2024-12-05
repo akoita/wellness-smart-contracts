@@ -31,7 +31,7 @@ case "$1" in
                 bash $ROOT_DIR/shell/deploy-local.sh
                 ;;
             --testnet)
-                bash $ROOT_DIR/shell/deploy-test.sh
+                bash $ROOT_DIR/shell/deploy-testnet.sh
                 ;;
             *)
                 echo "Invalid option for deploy. Use --local or --testnet."
