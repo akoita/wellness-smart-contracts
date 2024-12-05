@@ -12,7 +12,13 @@ The development of the project requires functional installations of:
 
 ## Essential Commands
 
-### Build
+### Install Node.js dependencies
+
+```bash
+$ npm install
+```
+
+### Build smart contracts
 
 ```bash
 $ forge build
@@ -86,6 +92,30 @@ $ ./main.sh deploy --local --copy-artifacts
 ```
 
 The artifacts will be copied to the `../wellness-frontend/public/foundry-artifacts` directory.
+
+### On Base Sepolia network
+
+First, export the required variables:
+
+```bash
+$ export API_KEY_BASESCAN=<your-api-key>
+$ export PRIVATE_KEY=<your-private-key>
+$ export PUBLIC_KEY=<your-account-address>
+```
+
+PRIVATE_KEY and PUBLIC_KEY are the private and public keys of the account you want to use to deploy the contracts.
+
+API_KEY_BASESCAN is your [BaseScan API key](https://basescan.org/api), required to verify the contracts on BaseScan. You
+can get an API key by creating an account on [BaseScan](https://basescan.org/).
+
+Then, deploy the contracts:
+
+```bash
+$ ./main.sh deploy --testnet
+```
+
+This will deploy the contracts to the Base Sepolia network and verify them on BaseScan. The artifacts will be copied to
+the `../testnet-artifacts` directory.
 
 ## Static Analysis
 
