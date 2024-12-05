@@ -48,8 +48,9 @@ contract ChallengeManagerTest is WellnessBaseTest {
 
         // register partner
         address partner = makeAddr("partner");
+        vm.deal(partner, 1 ether);
         vm.prank(partner);
-        wellnessHome.requestRegistrationAsPartner("name", "symbol");
+        wellnessHome.requestRegistrationAsPartner{ value: partnerRegistrationFee }("name", "symbol");
 
         // approve partner registration
         vm.prank(owner);
@@ -131,8 +132,9 @@ contract ChallengeManagerTest is WellnessBaseTest {
 
         // register partner
         address partner = makeAddr("partner");
+        vm.deal(partner, 1 ether);
         vm.prank(partner);
-        wellnessHome.requestRegistrationAsPartner("name", "symbol");
+        wellnessHome.requestRegistrationAsPartner{ value: partnerRegistrationFee }("name", "symbol");
 
         // approve partner registration
         vm.prank(owner);
@@ -189,8 +191,9 @@ contract ChallengeManagerTest is WellnessBaseTest {
 
         // register partner
         address partner = makeAddr("partner");
+        vm.deal(partner, 1 ether);
         vm.prank(partner);
-        wellnessHome.requestRegistrationAsPartner("name", "symbol");
+        wellnessHome.requestRegistrationAsPartner{ value: partnerRegistrationFee }("name", "symbol");
 
         // approve partner registration
         vm.prank(owner);
@@ -241,8 +244,9 @@ contract ChallengeManagerTest is WellnessBaseTest {
 
         // submit challenge
         address partner = makeAddr("partner");
+        vm.deal(partner, 1 ether);
         vm.prank(partner);
-        wellnessHome.requestRegistrationAsPartner("name", "symbol");
+        wellnessHome.requestRegistrationAsPartner{ value: partnerRegistrationFee }("name", "symbol");
         vm.prank(owner);
         wellnessHome.approvePartnerRegistration(partner);
         vm.prank(partner);
@@ -277,8 +281,9 @@ contract ChallengeManagerTest is WellnessBaseTest {
 
         // submit challenge
         address partner = makeAddr("partner");
+        vm.deal(partner, 1 ether);
         vm.prank(partner);
-        wellnessHome.requestRegistrationAsPartner("name", "symbol");
+        wellnessHome.requestRegistrationAsPartner{ value: partnerRegistrationFee }("name", "symbol");
         vm.prank(owner);
         wellnessHome.approvePartnerRegistration(partner);
         vm.prank(partner);
@@ -288,8 +293,9 @@ contract ChallengeManagerTest is WellnessBaseTest {
 
         // create another partner
         address anotherPartner = makeAddr("anotherPartner");
+        vm.deal(anotherPartner, 1 ether);
         vm.prank(anotherPartner);
-        wellnessHome.requestRegistrationAsPartner("name", "symbol");
+        wellnessHome.requestRegistrationAsPartner{ value: partnerRegistrationFee }("name", "symbol");
         vm.prank(owner);
         wellnessHome.approvePartnerRegistration(anotherPartner);
 
@@ -314,8 +320,9 @@ contract ChallengeManagerTest is WellnessBaseTest {
         uint256 invalidChallengeId = 1;
 
         address partner = makeAddr("partner");
+        vm.deal(partner, 1 ether);
         vm.prank(partner);
-        wellnessHome.requestRegistrationAsPartner("name", "symbol");
+        wellnessHome.requestRegistrationAsPartner{ value: partnerRegistrationFee }("name", "symbol");
         vm.prank(owner);
         wellnessHome.approvePartnerRegistration(partner);
 
@@ -341,8 +348,9 @@ contract ChallengeManagerTest is WellnessBaseTest {
 
         // submit challenge
         address partner = makeAddr("partner");
+        vm.deal(partner, 1 ether);
         vm.prank(partner);
-        wellnessHome.requestRegistrationAsPartner("name", "symbol");
+        wellnessHome.requestRegistrationAsPartner{ value: partnerRegistrationFee }("name", "symbol");
         vm.prank(owner);
         wellnessHome.approvePartnerRegistration(partner);
         vm.prank(partner);
@@ -386,8 +394,9 @@ contract ChallengeManagerTest is WellnessBaseTest {
 
         // register partner
         address partner = makeAddr("partner");
+        vm.deal(partner, 1 ether);
         vm.prank(partner);
-        wellnessHome.requestRegistrationAsPartner("name", "symbol");
+        wellnessHome.requestRegistrationAsPartner{ value: partnerRegistrationFee }("name", "symbol");
 
         // approve partner registration
         vm.prank(owner);
@@ -432,8 +441,9 @@ contract ChallengeManagerTest is WellnessBaseTest {
 
         // submit challenge
         address partner = makeAddr("partner");
+        vm.deal(partner, 1 ether);
         vm.prank(partner);
-        wellnessHome.requestRegistrationAsPartner("name", "symbol");
+        wellnessHome.requestRegistrationAsPartner{ value: partnerRegistrationFee }("name", "symbol");
         vm.prank(owner);
         wellnessHome.approvePartnerRegistration(partner);
         vm.prank(partner);
@@ -468,8 +478,9 @@ contract ChallengeManagerTest is WellnessBaseTest {
 
         // submit challenge
         address partner = makeAddr("partner");
+        vm.deal(partner, 1 ether);
         vm.prank(partner);
-        wellnessHome.requestRegistrationAsPartner("name", "symbol");
+        wellnessHome.requestRegistrationAsPartner{ value: partnerRegistrationFee }("name", "symbol");
         vm.prank(owner);
         wellnessHome.approvePartnerRegistration(partner);
         vm.prank(partner);
@@ -479,8 +490,9 @@ contract ChallengeManagerTest is WellnessBaseTest {
 
         // create another partner
         address anotherPartner = makeAddr("anotherPartner");
+        vm.deal(anotherPartner, 1 ether);
         vm.prank(anotherPartner);
-        wellnessHome.requestRegistrationAsPartner("name", "symbol");
+        wellnessHome.requestRegistrationAsPartner{ value: partnerRegistrationFee }("name", "symbol");
         vm.prank(owner);
         wellnessHome.approvePartnerRegistration(anotherPartner);
 
@@ -505,8 +517,9 @@ contract ChallengeManagerTest is WellnessBaseTest {
         uint256 invalidChallengeId = 1;
 
         address partner = makeAddr("partner");
+        vm.deal(partner, 1 ether);
         vm.prank(partner);
-        wellnessHome.requestRegistrationAsPartner("name", "symbol");
+        wellnessHome.requestRegistrationAsPartner{ value: partnerRegistrationFee }("name", "symbol");
         vm.prank(owner);
         wellnessHome.approvePartnerRegistration(partner);
 
@@ -532,8 +545,9 @@ contract ChallengeManagerTest is WellnessBaseTest {
 
         // submit challenge
         address partner = makeAddr("partner");
+        vm.deal(partner, 1 ether);
         vm.prank(partner);
-        wellnessHome.requestRegistrationAsPartner("name", "symbol");
+        wellnessHome.requestRegistrationAsPartner{ value: partnerRegistrationFee }("name", "symbol");
         vm.prank(owner);
         wellnessHome.approvePartnerRegistration(partner);
         vm.prank(partner);
@@ -577,8 +591,9 @@ contract ChallengeManagerTest is WellnessBaseTest {
 
         // register partner
         address partner = makeAddr("partner");
+        vm.deal(partner, 1 ether);
         vm.prank(partner);
-        wellnessHome.requestRegistrationAsPartner("name", "symbol");
+        wellnessHome.requestRegistrationAsPartner{ value: partnerRegistrationFee }("name", "symbol");
         vm.prank(owner);
         wellnessHome.approvePartnerRegistration(partner);
 
@@ -699,8 +714,9 @@ contract ChallengeManagerTest is WellnessBaseTest {
 
         // register partner
         address partner = makeAddr("partner");
+        vm.deal(partner, 1 ether);
         vm.prank(partner);
-        wellnessHome.requestRegistrationAsPartner("name", "symbol");
+        wellnessHome.requestRegistrationAsPartner{ value: partnerRegistrationFee }("name", "symbol");
         vm.prank(owner);
         wellnessHome.approvePartnerRegistration(partner);
 
@@ -743,8 +759,9 @@ contract ChallengeManagerTest is WellnessBaseTest {
 
         // register partner
         address partner = makeAddr("partner");
+        vm.deal(partner, 1 ether);
         vm.prank(partner);
-        wellnessHome.requestRegistrationAsPartner("name", "symbol");
+        wellnessHome.requestRegistrationAsPartner{ value: partnerRegistrationFee }("name", "symbol");
         vm.prank(owner);
         wellnessHome.approvePartnerRegistration(partner);
 
@@ -779,8 +796,9 @@ contract ChallengeManagerTest is WellnessBaseTest {
 
         // register partner
         address partner = makeAddr("partner");
+        vm.deal(partner, 1 ether);
         vm.prank(partner);
-        wellnessHome.requestRegistrationAsPartner("name", "symbol");
+        wellnessHome.requestRegistrationAsPartner{ value: partnerRegistrationFee }("name", "symbol");
         vm.prank(owner);
         wellnessHome.approvePartnerRegistration(partner);
 

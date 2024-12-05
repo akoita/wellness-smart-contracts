@@ -31,7 +31,7 @@ contract WellnessHomeTest is WellnessBaseTest {
     function test_requestRegistrationAsPartner() public {
         ///*********************************** Fixture ***********************************///
         address partner = makeAddr("partner");
-
+        vm.deal(partner, 1 ether);
         ///************************************* Preconditions ******************************///
         // partner registration request should not exist
         assertEq(
@@ -43,7 +43,7 @@ contract WellnessHomeTest is WellnessBaseTest {
         ///************************************ Action ***********************************///
         // partner requests registration
         vm.prank(partner);
-        wellnessHome.requestRegistrationAsPartner("name", "symbol");
+        wellnessHome.requestRegistrationAsPartner{ value: partnerRegistrationFee }("name", "symbol");
 
         ///********************************* Postconditions ******************************///
         // partner registration request should exist
@@ -55,9 +55,10 @@ contract WellnessHomeTest is WellnessBaseTest {
     function test_requestRegistrationAsPartner_should_fail_if_partner_registration_request_already_exists() public {
         ///*********************************** Fixture ***********************************///
         address partner = makeAddr("partner");
+        vm.deal(partner, 1 ether);
         // partner requests registration
         vm.prank(partner);
-        wellnessHome.requestRegistrationAsPartner("name", "symbol");
+        wellnessHome.requestRegistrationAsPartner{ value: partnerRegistrationFee }("name", "symbol");
 
         ///************************************* Preconditions ******************************///
         // partner registration request should exist
@@ -69,15 +70,16 @@ contract WellnessHomeTest is WellnessBaseTest {
         // partner requests registration again: should fail
         vm.prank(partner);
         vm.expectRevert(abi.encodeWithSelector(PartnerRegistrationRequestAlreadySubmitted.selector, partner));
-        wellnessHome.requestRegistrationAsPartner("name", "symbol");
+        wellnessHome.requestRegistrationAsPartner{ value: partnerRegistrationFee }("name", "symbol");
     }
 
     function test_requestRegistrationAsPartner_should_fail_if_partner_is_already_registered() public {
         ///*********************************** Fixture ***********************************///
         address partner = makeAddr("partner");
+        vm.deal(partner, 1 ether);
         // register partner
         vm.prank(partner);
-        wellnessHome.requestRegistrationAsPartner("name", "symbol");
+        wellnessHome.requestRegistrationAsPartner{ value: partnerRegistrationFee }("name", "symbol");
         vm.prank(owner);
         wellnessHome.approvePartnerRegistration(partner);
 
@@ -89,15 +91,16 @@ contract WellnessHomeTest is WellnessBaseTest {
         // partner requests registration again: should fail
         vm.prank(partner);
         vm.expectRevert(abi.encodeWithSelector(PartnerAlreadyRegistered.selector, partner));
-        wellnessHome.requestRegistrationAsPartner("name", "symbol");
+        wellnessHome.requestRegistrationAsPartner{ value: partnerRegistrationFee }("name", "symbol");
     }
 
     function test_requestRegistrationAsPartner_should_fail_if_partner_has_been_revoked() public {
         ///*********************************** Fixture ***********************************///
         address partner = makeAddr("partner");
+        vm.deal(partner, 1 ether);
         // partner requests registration
         vm.prank(partner);
-        wellnessHome.requestRegistrationAsPartner("name", "symbol");
+        wellnessHome.requestRegistrationAsPartner{ value: partnerRegistrationFee }("name", "symbol");
 
         // owner approves partner registration
         // Approve partner registration as the owner
@@ -115,7 +118,7 @@ contract WellnessHomeTest is WellnessBaseTest {
         // trying to request registration as a partner that has been revoked should fail
         vm.prank(partner);
         vm.expectRevert(abi.encodeWithSelector(PartnerIsRevoked.selector, partner));
-        wellnessHome.requestRegistrationAsPartner("name", "symbol");
+        wellnessHome.requestRegistrationAsPartner{ value: partnerRegistrationFee }("name", "symbol");
     }
 
     function test_requestRegistrationAsPartner_should_fail_if_owner_address() public {
@@ -123,12 +126,13 @@ contract WellnessHomeTest is WellnessBaseTest {
         // request partner registration as owner should fail
         vm.prank(owner);
         vm.expectRevert(abi.encodeWithSelector(OwnerAddressForbidden.selector, owner));
-        wellnessHome.requestRegistrationAsPartner("name", "symbol");
+        wellnessHome.requestRegistrationAsPartner{ value: partnerRegistrationFee }("name", "symbol");
     }
 
     function test_requestRegistrationAsPartner_should_fail_if_existing_user_address() public {
         ///*********************************** Fixture ***********************************///
         address user = makeAddr("user");
+        vm.deal(user, 1 ether);
         vm.prank(user);
         wellnessHome.registerAsUser();
 
@@ -140,7 +144,7 @@ contract WellnessHomeTest is WellnessBaseTest {
         // request partner registration as user should fail
         vm.prank(user);
         vm.expectRevert(abi.encodeWithSelector(ExistingUserWithThisAddress.selector, user));
-        wellnessHome.requestRegistrationAsPartner("name", "symbol");
+        wellnessHome.requestRegistrationAsPartner{ value: partnerRegistrationFee }("name", "symbol");
     }
 
     ///****************************************************************************************************///
@@ -151,9 +155,10 @@ contract WellnessHomeTest is WellnessBaseTest {
     function test_approvePartnerRegistration() public {
         ///*********************************** Fixture ***********************************///
         address partner = makeAddr("partner");
+        vm.deal(partner, 1 ether);
         // partner requests registration
         vm.prank(partner);
-        wellnessHome.requestRegistrationAsPartner("name", "symbol");
+        wellnessHome.requestRegistrationAsPartner{ value: partnerRegistrationFee }("name", "symbol");
 
         ///********************************* Preconditions *******************************///
         // partner should not be registered
@@ -182,9 +187,10 @@ contract WellnessHomeTest is WellnessBaseTest {
     function test_approvePartnerRegistration_should_fail_if_not_owner() public {
         ///*********************************** Fixture ***********************************///
         address partner = makeAddr("partner");
+        vm.deal(partner, 1 ether);
         // partner requests registration
         vm.prank(partner);
-        wellnessHome.requestRegistrationAsPartner("name", "symbol");
+        wellnessHome.requestRegistrationAsPartner{ value: partnerRegistrationFee }("name", "symbol");
 
         ///********************************* Preconditions *******************************///
         // partner should not be registered
@@ -221,15 +227,15 @@ contract WellnessHomeTest is WellnessBaseTest {
     }
 
     ///****************************************************************************************************///
-    ///*************************************** revokePartnerRegistration
-    /// **********************************///
+    ///************************************ revokePartnerRegistration *************************************///
     ///****************************************************************************************************///
     function test_revokePartnerRegistration() public {
         ///*********************************** Fixture ***********************************///
         // register partner
         address partner = makeAddr("partner");
+        vm.deal(partner, 1 ether);
         vm.prank(partner);
-        wellnessHome.requestRegistrationAsPartner("name", "symbol");
+        wellnessHome.requestRegistrationAsPartner{ value: partnerRegistrationFee }("name", "symbol");
         vm.prank(owner);
         wellnessHome.approvePartnerRegistration(partner);
 
@@ -246,8 +252,9 @@ contract WellnessHomeTest is WellnessBaseTest {
     function test_revokePartnerRegistration_should_fail_if_not_owner() public {
         ///*********************************** Fixture ***********************************///
         address partner = makeAddr("partner");
+        vm.deal(partner, 1 ether);
         vm.prank(partner);
-        wellnessHome.requestRegistrationAsPartner("name", "symbol");
+        wellnessHome.requestRegistrationAsPartner{ value: partnerRegistrationFee }("name", "symbol");
         vm.prank(owner);
         wellnessHome.approvePartnerRegistration(partner);
 
@@ -320,8 +327,9 @@ contract WellnessHomeTest is WellnessBaseTest {
     function test_registerAsUser_should_fail_if_partner_address() public {
         ///************************************* Fixture ***********************************///
         address partner = makeAddr("partner");
+        vm.deal(partner, 1 ether);
         vm.prank(partner);
-        wellnessHome.requestRegistrationAsPartner("name", "symbol");
+        wellnessHome.requestRegistrationAsPartner{ value: partnerRegistrationFee }("name", "symbol");
         vm.prank(owner);
         wellnessHome.approvePartnerRegistration(partner);
 

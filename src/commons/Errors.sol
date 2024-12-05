@@ -9,7 +9,7 @@ error UserOperationNotAllowedForPartner(address user);
 error UserOperationNotAllowedForOwner(address partner);
 
 ///******************************************* WellnessHome *******************************************///
-
+error InsufficientRegistrationFee(uint256 provided, uint256 required);
 error PartnerNotRegistered(address partner);
 error PartnerAlreadyRegistered(address partner);
 error PartnerRegistrationRequestNotFound(address partner);
@@ -41,3 +41,4 @@ error InvalidInputChallengeCompletion(string message);
 ///***************************************** WellnessSoulboundToken *****************************************///
 error AdminRoleRequired(address account);
 error MinterRoleRequired(address account);
+error SoulboundTokenNonTransferable();

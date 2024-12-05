@@ -1,0 +1,410 @@
+[
+  {
+    "elements": [
+      {
+        "type": "variable",
+        "name": "_partnersSettings",
+        "source_mapping": {
+          "start": 1307,
+          "length": 86,
+          "filename_relative": "src/WellnessHome.sol",
+          "filename_absolute": "/home/akoita/dev/bbs/wellness-smart-contracts/src/WellnessHome.sol",
+          "filename_short": "src/WellnessHome.sol",
+          "is_dependency": false,
+          "lines": [37],
+          "starting_column": 5,
+          "ending_column": 91
+        },
+        "type_specific_fields": {
+          "parent": {
+            "type": "contract",
+            "name": "WellnessHome",
+            "source_mapping": {
+              "start": 946,
+              "length": 6706,
+              "filename_relative": "src/WellnessHome.sol",
+              "filename_absolute": "/home/akoita/dev/bbs/wellness-smart-contracts/src/WellnessHome.sol",
+              "filename_short": "src/WellnessHome.sol",
+              "is_dependency": false,
+              "lines": [
+                27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52,
+                53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78,
+                79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103,
+                104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124,
+                125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145,
+                146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166,
+                167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187,
+                188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208,
+                209, 210, 211, 212, 213, 214, 215
+              ],
+              "starting_column": 1,
+              "ending_column": 2
+            }
+          }
+        }
+      },
+      {
+        "type": "function",
+        "name": "getPartnerSettings",
+        "source_mapping": {
+          "start": 4271,
+          "length": 264,
+          "filename_relative": "src/WellnessHome.sol",
+          "filename_absolute": "/home/akoita/dev/bbs/wellness-smart-contracts/src/WellnessHome.sol",
+          "filename_short": "src/WellnessHome.sol",
+          "is_dependency": false,
+          "lines": [121, 122, 123, 124, 125, 126, 127, 128, 129],
+          "starting_column": 5,
+          "ending_column": 6
+        },
+        "type_specific_fields": {
+          "parent": {
+            "type": "contract",
+            "name": "WellnessHome",
+            "source_mapping": {
+              "start": 946,
+              "length": 6706,
+              "filename_relative": "src/WellnessHome.sol",
+              "filename_absolute": "/home/akoita/dev/bbs/wellness-smart-contracts/src/WellnessHome.sol",
+              "filename_short": "src/WellnessHome.sol",
+              "is_dependency": false,
+              "lines": [
+                27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52,
+                53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78,
+                79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103,
+                104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124,
+                125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145,
+                146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166,
+                167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187,
+                188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208,
+                209, 210, 211, 212, 213, 214, 215
+              ],
+              "starting_column": 1,
+              "ending_column": 2
+            }
+          },
+          "signature": "getPartnerSettings(address)"
+        }
+      }
+    ],
+    "description": "WellnessHome._partnersSettings (src/WellnessHome.sol#37) is never initialized. It is used in:\n\t- WellnessHome.getPartnerSettings(address) (src/WellnessHome.sol#121-129)\n",
+    "markdown": "[WellnessHome._partnersSettings](src/WellnessHome.sol#L37) is never initialized. It is used in:\n\t- [WellnessHome.getPartnerSettings(address)](src/WellnessHome.sol#L121-L129)\n",
+    "first_markdown_element": "src/WellnessHome.sol#L37",
+    "id": "5658033c790145b4fb64192098d4af25a7f380f9c0817fbbcf14f3c6de62aea7",
+    "check": "uninitialized-state",
+    "impact": "High",
+    "confidence": "High"
+  },
+  {
+    "elements": [
+      {
+        "type": "variable",
+        "name": "_partners",
+        "source_mapping": {
+          "start": 1213,
+          "length": 43,
+          "filename_relative": "src/WellnessHome.sol",
+          "filename_absolute": "/home/akoita/dev/bbs/wellness-smart-contracts/src/WellnessHome.sol",
+          "filename_short": "src/WellnessHome.sol",
+          "is_dependency": false,
+          "lines": [35],
+          "starting_column": 5,
+          "ending_column": 48
+        },
+        "type_specific_fields": {
+          "parent": {
+            "type": "contract",
+            "name": "WellnessHome",
+            "source_mapping": {
+              "start": 946,
+              "length": 6706,
+              "filename_relative": "src/WellnessHome.sol",
+              "filename_absolute": "/home/akoita/dev/bbs/wellness-smart-contracts/src/WellnessHome.sol",
+              "filename_short": "src/WellnessHome.sol",
+              "is_dependency": false,
+              "lines": [
+                27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52,
+                53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78,
+                79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103,
+                104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124,
+                125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145,
+                146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166,
+                167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187,
+                188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208,
+                209, 210, 211, 212, 213, 214, 215
+              ],
+              "starting_column": 1,
+              "ending_column": 2
+            }
+          }
+        }
+      },
+      {
+        "type": "contract",
+        "name": "WellnessHome",
+        "source_mapping": {
+          "start": 946,
+          "length": 6706,
+          "filename_relative": "src/WellnessHome.sol",
+          "filename_absolute": "/home/akoita/dev/bbs/wellness-smart-contracts/src/WellnessHome.sol",
+          "filename_short": "src/WellnessHome.sol",
+          "is_dependency": false,
+          "lines": [
+            27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53,
+            54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80,
+            81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105,
+            106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126,
+            127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147,
+            148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168,
+            169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189,
+            190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210,
+            211, 212, 213, 214, 215
+          ],
+          "starting_column": 1,
+          "ending_column": 2
+        }
+      }
+    ],
+    "description": "WellnessHome._partners (src/WellnessHome.sol#35) is never used in WellnessHome (src/WellnessHome.sol#27-215)\n",
+    "markdown": "[WellnessHome._partners](src/WellnessHome.sol#L35) is never used in [WellnessHome](src/WellnessHome.sol#L27-L215)\n",
+    "first_markdown_element": "src/WellnessHome.sol#L35",
+    "id": "2f56dceebdd2e04cd811c7b6585cc6bf92f49ec90ab8b52a0638909d40f442a7",
+    "check": "unused-state",
+    "impact": "Informational",
+    "confidence": "High"
+  },
+  {
+    "elements": [
+      {
+        "type": "variable",
+        "name": "_partnerRegistrationRequests",
+        "source_mapping": {
+          "start": 1437,
+          "length": 62,
+          "filename_relative": "src/WellnessHome.sol",
+          "filename_absolute": "/home/akoita/dev/bbs/wellness-smart-contracts/src/WellnessHome.sol",
+          "filename_short": "src/WellnessHome.sol",
+          "is_dependency": false,
+          "lines": [39],
+          "starting_column": 5,
+          "ending_column": 67
+        },
+        "type_specific_fields": {
+          "parent": {
+            "type": "contract",
+            "name": "WellnessHome",
+            "source_mapping": {
+              "start": 946,
+              "length": 6706,
+              "filename_relative": "src/WellnessHome.sol",
+              "filename_absolute": "/home/akoita/dev/bbs/wellness-smart-contracts/src/WellnessHome.sol",
+              "filename_short": "src/WellnessHome.sol",
+              "is_dependency": false,
+              "lines": [
+                27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52,
+                53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78,
+                79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103,
+                104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124,
+                125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145,
+                146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166,
+                167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187,
+                188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208,
+                209, 210, 211, 212, 213, 214, 215
+              ],
+              "starting_column": 1,
+              "ending_column": 2
+            }
+          }
+        }
+      },
+      {
+        "type": "contract",
+        "name": "WellnessHome",
+        "source_mapping": {
+          "start": 946,
+          "length": 6706,
+          "filename_relative": "src/WellnessHome.sol",
+          "filename_absolute": "/home/akoita/dev/bbs/wellness-smart-contracts/src/WellnessHome.sol",
+          "filename_short": "src/WellnessHome.sol",
+          "is_dependency": false,
+          "lines": [
+            27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53,
+            54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80,
+            81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105,
+            106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126,
+            127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147,
+            148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168,
+            169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189,
+            190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210,
+            211, 212, 213, 214, 215
+          ],
+          "starting_column": 1,
+          "ending_column": 2
+        }
+      }
+    ],
+    "description": "WellnessHome._partnerRegistrationRequests (src/WellnessHome.sol#39) is never used in WellnessHome (src/WellnessHome.sol#27-215)\n",
+    "markdown": "[WellnessHome._partnerRegistrationRequests](src/WellnessHome.sol#L39) is never used in [WellnessHome](src/WellnessHome.sol#L27-L215)\n",
+    "first_markdown_element": "src/WellnessHome.sol#L39",
+    "id": "13d8424abce66537cbdb6059d43d1de8448d48bcb40c444aecf8a150307a6826",
+    "check": "unused-state",
+    "impact": "Informational",
+    "confidence": "High"
+  },
+  {
+    "elements": [
+      {
+        "type": "variable",
+        "name": "_revokedPartners",
+        "source_mapping": {
+          "start": 1543,
+          "length": 50,
+          "filename_relative": "src/WellnessHome.sol",
+          "filename_absolute": "/home/akoita/dev/bbs/wellness-smart-contracts/src/WellnessHome.sol",
+          "filename_short": "src/WellnessHome.sol",
+          "is_dependency": false,
+          "lines": [41],
+          "starting_column": 5,
+          "ending_column": 55
+        },
+        "type_specific_fields": {
+          "parent": {
+            "type": "contract",
+            "name": "WellnessHome",
+            "source_mapping": {
+              "start": 946,
+              "length": 6706,
+              "filename_relative": "src/WellnessHome.sol",
+              "filename_absolute": "/home/akoita/dev/bbs/wellness-smart-contracts/src/WellnessHome.sol",
+              "filename_short": "src/WellnessHome.sol",
+              "is_dependency": false,
+              "lines": [
+                27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52,
+                53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78,
+                79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103,
+                104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124,
+                125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145,
+                146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166,
+                167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187,
+                188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208,
+                209, 210, 211, 212, 213, 214, 215
+              ],
+              "starting_column": 1,
+              "ending_column": 2
+            }
+          }
+        }
+      },
+      {
+        "type": "contract",
+        "name": "WellnessHome",
+        "source_mapping": {
+          "start": 946,
+          "length": 6706,
+          "filename_relative": "src/WellnessHome.sol",
+          "filename_absolute": "/home/akoita/dev/bbs/wellness-smart-contracts/src/WellnessHome.sol",
+          "filename_short": "src/WellnessHome.sol",
+          "is_dependency": false,
+          "lines": [
+            27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53,
+            54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80,
+            81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105,
+            106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126,
+            127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147,
+            148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168,
+            169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189,
+            190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210,
+            211, 212, 213, 214, 215
+          ],
+          "starting_column": 1,
+          "ending_column": 2
+        }
+      }
+    ],
+    "description": "WellnessHome._revokedPartners (src/WellnessHome.sol#41) is never used in WellnessHome (src/WellnessHome.sol#27-215)\n",
+    "markdown": "[WellnessHome._revokedPartners](src/WellnessHome.sol#L41) is never used in [WellnessHome](src/WellnessHome.sol#L27-L215)\n",
+    "first_markdown_element": "src/WellnessHome.sol#L41",
+    "id": "3ec422010a2cbdac8a32586685c9a972cb30bd7b77c4e508c6eb33d70198a36f",
+    "check": "unused-state",
+    "impact": "Informational",
+    "confidence": "High"
+  },
+  {
+    "elements": [
+      {
+        "type": "variable",
+        "name": "_users",
+        "source_mapping": {
+          "start": 1637,
+          "length": 40,
+          "filename_relative": "src/WellnessHome.sol",
+          "filename_absolute": "/home/akoita/dev/bbs/wellness-smart-contracts/src/WellnessHome.sol",
+          "filename_short": "src/WellnessHome.sol",
+          "is_dependency": false,
+          "lines": [43],
+          "starting_column": 5,
+          "ending_column": 45
+        },
+        "type_specific_fields": {
+          "parent": {
+            "type": "contract",
+            "name": "WellnessHome",
+            "source_mapping": {
+              "start": 946,
+              "length": 6706,
+              "filename_relative": "src/WellnessHome.sol",
+              "filename_absolute": "/home/akoita/dev/bbs/wellness-smart-contracts/src/WellnessHome.sol",
+              "filename_short": "src/WellnessHome.sol",
+              "is_dependency": false,
+              "lines": [
+                27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52,
+                53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78,
+                79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103,
+                104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124,
+                125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145,
+                146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166,
+                167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187,
+                188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208,
+                209, 210, 211, 212, 213, 214, 215
+              ],
+              "starting_column": 1,
+              "ending_column": 2
+            }
+          }
+        }
+      },
+      {
+        "type": "contract",
+        "name": "WellnessHome",
+        "source_mapping": {
+          "start": 946,
+          "length": 6706,
+          "filename_relative": "src/WellnessHome.sol",
+          "filename_absolute": "/home/akoita/dev/bbs/wellness-smart-contracts/src/WellnessHome.sol",
+          "filename_short": "src/WellnessHome.sol",
+          "is_dependency": false,
+          "lines": [
+            27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53,
+            54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80,
+            81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105,
+            106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126,
+            127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147,
+            148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168,
+            169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189,
+            190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210,
+            211, 212, 213, 214, 215
+          ],
+          "starting_column": 1,
+          "ending_column": 2
+        }
+      }
+    ],
+    "description": "WellnessHome._users (src/WellnessHome.sol#43) is never used in WellnessHome (src/WellnessHome.sol#27-215)\n",
+    "markdown": "[WellnessHome._users](src/WellnessHome.sol#L43) is never used in [WellnessHome](src/WellnessHome.sol#L27-L215)\n",
+    "first_markdown_element": "src/WellnessHome.sol#L43",
+    "id": "5ad2e7d3441a790c269113f15b2614add0299d74213aa0ea5179b3e1c64b94a9",
+    "check": "unused-state",
+    "impact": "Informational",
+    "confidence": "High"
+  }
+]

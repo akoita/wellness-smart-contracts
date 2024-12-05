@@ -35,8 +35,9 @@ contract DefaultChallengeRewardStrategyTest is WellnessBaseTest {
 
         // register partner
         address partner = makeAddr("partner");
+        vm.deal(partner, 1 ether);
         vm.prank(partner);
-        wellnessHome.requestRegistrationAsPartner("name", "symbol");
+        wellnessHome.requestRegistrationAsPartner{ value: partnerRegistrationFee }("name", "symbol");
         vm.prank(owner);
         wellnessHome.approvePartnerRegistration(partner);
         PartnerSettings memory partnerSettings = wellnessHome.getPartnerSettings(partner);
@@ -129,8 +130,9 @@ contract DefaultChallengeRewardStrategyTest is WellnessBaseTest {
 
         // register partner
         address partner = makeAddr("partner");
+        vm.deal(partner, 1 ether);
         vm.prank(partner);
-        wellnessHome.requestRegistrationAsPartner("name", "symbol");
+        wellnessHome.requestRegistrationAsPartner{ value: partnerRegistrationFee }("name", "symbol");
         vm.prank(owner);
         wellnessHome.approvePartnerRegistration(partner);
 
@@ -202,8 +204,9 @@ contract DefaultChallengeRewardStrategyTest is WellnessBaseTest {
 
         // register partner
         address partner = makeAddr("partner");
+        vm.deal(partner, 1 ether);
         vm.prank(partner);
-        wellnessHome.requestRegistrationAsPartner("name", "symbol");
+        wellnessHome.requestRegistrationAsPartner{ value: partnerRegistrationFee }("name", "symbol");
         vm.prank(owner);
         wellnessHome.approvePartnerRegistration(partner);
 
@@ -284,8 +287,9 @@ contract DefaultChallengeRewardStrategyTest is WellnessBaseTest {
 
         // register partner
         address partner = makeAddr("partner");
+        vm.deal(partner, 1 ether);
         vm.prank(partner);
-        wellnessHome.requestRegistrationAsPartner("name", "symbol");
+        wellnessHome.requestRegistrationAsPartner{ value: partnerRegistrationFee }("name", "symbol");
         vm.prank(owner);
         wellnessHome.approvePartnerRegistration(partner);
 
@@ -333,8 +337,9 @@ contract DefaultChallengeRewardStrategyTest is WellnessBaseTest {
 
         // register partner
         address partner = makeAddr("partner");
+        vm.deal(partner, 1 ether);
         vm.prank(partner);
-        wellnessHome.requestRegistrationAsPartner("name", "symbol");
+        wellnessHome.requestRegistrationAsPartner{ value: partnerRegistrationFee }("name", "symbol");
         vm.prank(owner);
         wellnessHome.approvePartnerRegistration(partner);
 
