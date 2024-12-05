@@ -16,7 +16,8 @@ import {
     UserAlreadyRegistered,
     ExistingUserWithThisAddress,
     ExistingOrRevokedPartnerWithThisAddress,
-    OwnerAddressForbidden
+    OwnerAddressForbidden,
+    InsufficientRegistrationFee
 } from "./commons/Errors.sol";
 
 import { IChallengeRewardStrategy } from "./interfaces/IChallengeRewardStrategy.sol";
@@ -28,14 +29,17 @@ contract WellnessHome is Ownable, IWellnessHome {
 
     // State variables
 
-    /// @custom:security unused-return
+    // slither-disable-next-line uninitialized-state
+    uint256 public partnerRegistrationFee;
+    /// @custom:security unused-state
     EnumerableSet.AddressSet internal _partners;
+    /// @custom:security uninitialized-state
     mapping(address partner => PartnerSettings partnerSettings) internal _partnersSettings;
-    /// @custom:security unused-return
+    /// @custom:security unused-state
     EnumerableSet.AddressSet internal _partnerRegistrationRequests;
-    /// @custom:security unused-return
+    /// @custom:security unused-state
     EnumerableSet.AddressSet internal _revokedPartners;
-    /// @custom:security unused-return
+    /// @custom:security unused-state
     EnumerableSet.AddressSet internal _users;
 
     IChallengeRewardStrategy internal _challengeRewardStrategy;
@@ -96,10 +100,20 @@ contract WellnessHome is Ownable, IWellnessHome {
     }
 
     // Constructor
-    constructor(address initialOwner) Ownable(initialOwner) { }
+    constructor(address initialOwner) Ownable(initialOwner) {
+        partnerRegistrationFee = 0.001 ether;
+    }
+
+    function setPartnerRegistrationFee(uint256 fee) external onlyOwner {
+        partnerRegistrationFee = fee;
+    }
 
     function setChallengeRewardStrategy(IChallengeRewardStrategy challengeRewardStrategy_) external onlyOwner {
         _challengeRewardStrategy = challengeRewardStrategy_;
+    }
+
+    function withdraw() external onlyOwner {
+        payable(owner()).transfer(address(this).balance);
     }
 
     // External functions
@@ -110,21 +124,25 @@ contract WellnessHome is Ownable, IWellnessHome {
         onlyExistingPartner(partner)
         returns (PartnerSettings memory)
     {
+        // slither-disable-
         return _partnersSettings[partner];
     }
 
+    /// @inheritdoc IWellnessHome
     // slither-disable-start unused-return
     function requestRegistrationAsPartner(
         string memory nftName,
         string memory nftSymbol
     )
         external
+        payable
         onlyNotExistingPartner(msg.sender)
         onlyNotExistingPartnerRegistrationRequest(msg.sender)
         onlyNotRevokedPartner(msg.sender)
         onlyNonOwner(msg.sender)
         onlyNonUser(msg.sender)
     {
+        require(msg.value >= partnerRegistrationFee, InsufficientRegistrationFee(msg.value, partnerRegistrationFee));
         _partnerRegistrationRequests.add(msg.sender);
         _partnersSettings[msg.sender] = PartnerSettings({
             soulboundTokenName: nftName,

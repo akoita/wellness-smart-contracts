@@ -38,6 +38,8 @@ contract WellnessBaseTest is Test {
     DefaultChallengeRewardStrategy internal challengeRewardStrategy;
     WellnessSoulboundToken internal soulboundToken;
 
+    uint256 internal partnerRegistrationFee = 0.001 ether;
+
     function setUp() public virtual {
         // Deploy contracts
 
@@ -50,6 +52,10 @@ contract WellnessBaseTest is Test {
         (wellnessHome, challengeManager, challengeCompletionValidationStrategy, challengeRewardStrategy) =
             wellnessDeploy.run();
         vm.stopPrank();
+
+        partnerRegistrationFee = wellnessHome.partnerRegistrationFee();
+        // Add funds to the contract
+        vm.deal(owner, 100 ether);
 
         challengeCompletionData.berryBliss = vm.readFileBinary(
             "./test/challenges-completions-images/Berry_Bliss_colorful_assortment_of_fresh_fruits_including_stra.jpg"
