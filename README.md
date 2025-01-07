@@ -123,7 +123,7 @@ the `../testnet-artifacts` directory.
 CI pipeline to run the static analysis.
 
 But you can also run it locally. For that you will need to install slither. If you have a functionnal python
-environment, you can (install)[https://github.com/crytic/slither?tab=readme-ov-file#how-to-install] Slither as follow:
+environment, you can [install Slither](https://github.com/crytic/slither?tab=readme-ov-file#how-to-install) as follow:
 
 ```bash
 $ pip install slither-analyzer
