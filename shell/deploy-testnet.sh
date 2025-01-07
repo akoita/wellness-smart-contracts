@@ -14,7 +14,7 @@ COPY_ARTIFACTS_DESTINATION="$ROOT_DIR/testnet-artifacts"
 
 rm -rf $COPY_ARTIFACTS_DESTINATION/*
 mkdir -p $COPY_ARTIFACTS_DESTINATION
-cp $ROOT_DIR/broadcast/WellnessDeploy.s.sol/31337/run-latest.json $COPY_ARTIFACTS_DESTINATION
+cp $ROOT_DIR/broadcast/WellnessDeploy.s.sol/84532/run-latest.json $COPY_ARTIFACTS_DESTINATION
 cp -r $ROOT_DIR/out/WellnessHome.sol $COPY_ARTIFACTS_DESTINATION
 cp -r $ROOT_DIR/out/ChallengeManager.sol $COPY_ARTIFACTS_DESTINATION
 cp -r $ROOT_DIR/out/WellnessSoulboundToken.sol $COPY_ARTIFACTS_DESTINATION
